@@ -63,3 +63,56 @@ function showCount(count) {
 > switch/case 有通过 case 进行“分组”的能力，其实是 switch 语句没有 break 时的副作用。
 
 > 这里的相等是严格相等。被比较的值必须是相同的类型才能进行匹配。
+
+## 对象
+[zh.javascript.info](https://zh.javascript.info/object)
+对象是具有一些特殊特性的关联数组。
+
+### 创建
+```js
+let user = new Object(); // 构造函数
+let user = {}; // 字面量
+```
+
+### 访问属性
+> 点符号要求 key 是有效的变量标识符。这意味着：不包含空格，不以数字开头，也不包含特殊字符（允许使用 $ 和 _）。
+
+> 使用方括号，可用于任何字符串，计算属性
+```js
+let key = prompt("What do you want to know about the user?", "name");
+console.log(user[key]);
+```
+> 属性命名没有限制。属性名可以是任何字符串或者 symbol
+
+> 其他类型会被自动地转换为字符串。
+
+> 一个名为 __proto__ 的属性。我们不能将它设置为一个非对象的值：
+
+> 属性名简写：如果属性名和变量名一样，则可以简写。
+```js
+function makeUser(name, age) {
+  return {
+    name: name,
+    age: age,
+  };
+}
+
+// 可以简写为以下
+function makeUser(name, age) {
+  return {
+    name,
+    age,
+  };
+}
+```
+
+> 属性存在性测试 `in` 操作符，大多数情况可以通过判断属性值是否为`undefined` 判断属性是否存在，因为读取不到的属性只会得到 `undefined`。
+> 如果属性存在，但存储的值是 `undefined`，那么此时无法通过上述方法判断，所以要使用 `in` 操作符。
+
+> 为了遍历一个对象的所有键（key），可以使用一个特殊形式的循环：for..in。
+
+> 整数属性会被进行排序，其他属性则按照创建的顺序显示。
+
+> 这里的“整数属性”指的是一个可以在不做任何更改的情况下与一个整数进行相互转换的字符串。
+
+> 为了解决电话号码的问题，我们可以使用非整数属性名来 欺骗 程序。只需要给每个键名加一个加号 "+" 前缀就行了。
