@@ -116,3 +116,69 @@ function makeUser(name, age) {
 > 这里的“整数属性”指的是一个可以在不做任何更改的情况下与一个整数进行相互转换的字符串。
 
 > 为了解决电话号码的问题，我们可以使用非整数属性名来 欺骗 程序。只需要给每个键名加一个加号 "+" 前缀就行了。
+
+### 对象的引用与复制
+> 对象与原始类型的根本区别之一是，对象是“通过引用”存储和复制的，而原始类型：字符串、数字、布尔值等 —— 总是“作为一个整体”复制。 
+
+> 使用 const 声明的对象也是可以被修改的
+
+#### 浅层克隆  
+> 创建一个新对象，通过遍历已有对象的属性，并在原始类型值的层面复制它们，以实现对已有对象结构的复制。  
+``` js
+let user = {
+  name: "John",
+  age: 30
+};
+
+let clone = {}; // 新的空对象
+
+// 将 user 中所有的属性拷贝到其中
+for (let key in user) {
+  clone[key] = user[key];
+}
+
+// 现在 clone 是带有相同内容的完全独立的对象
+clone.name = "Pete"; // 改变了其中的数据
+
+alert( user.name ); // 原来的对象中的 name 属性依然是 John
+```
+
+> 使用 `Object.assign()`  
+  `Object.assign(dest, [src1, src2, src3...])`  
+
+> 使用 `spread` 语法：`clone = {...user}`  
+### 深层克隆  
+> 浅层克隆无法处理属性是对象的情况。  
+
+``` js
+let user = {
+  name: "John",
+  sizes: {
+    height: 182,
+    width: 50
+  }
+};
+
+let clone = Object.assign({}, user);
+
+alert( user.sizes === clone.sizes ); // true，同一个对象
+
+// user 和 clone 分享同一个 sizes
+user.sizes.width++;       // 通过其中一个改变属性值
+alert(clone.sizes.width); // 51，能从另外一个获取到变更后的结果
+```
+可以使用 `structuredClone` [参见](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone)  
+
+``` js
+const mushrooms1 = {
+  amanita: ["muscaria", "virosa"],
+};
+
+const mushrooms2 = structuredClone(mushrooms1);
+
+mushrooms2.amanita.push("pantherina");
+mushrooms1.amanita.pop();
+
+console.log(mushrooms2.amanita); // ["muscaria", "virosa", "pantherina"]
+console.log(mushrooms1.amanita); // ["muscaria"]
+```
