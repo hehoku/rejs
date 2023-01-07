@@ -219,3 +219,18 @@ user.sayHi(); // Hehoku
 
 user.arrowFunction(); // undefined
 ```
+
+### 构造器和操作符 "new"
+[zh.javascript.info](https://zh.javascript.info/constructor-new)
+> 当一个函数被使用 new 操作符执行时，它按照以下步骤： 
+1. 一个新的空对象被创建并分配给 this。 
+2. 函数体执行。通常它会修改 this，为其添加新的属性。 
+3. 返回 this 的值。
+
+> 构造器的主要目的 —— 实现可重用的对象创建代码。
+
+> 从技术上讲，任何函数（除了箭头函数，它没有自己的 this）都可以用作构造器。
+
+> “首字母大写”是一个共同的约定，以明确表示一个函数将被使用 new 来运行。
+
+> 在一个函数内部，我们可以使用 new.target 属性来检查它是否被使用 new 进行调用了。 对于常规调用，它为 undefined，对于使用 new 的调用，则等于该函数
