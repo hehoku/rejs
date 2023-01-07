@@ -182,3 +182,40 @@ mushrooms1.amanita.pop();
 console.log(mushrooms2.amanita); // ["muscaria", "virosa", "pantherina"]
 console.log(mushrooms1.amanita); // ["muscaria"]
 ```
+
+### 对象方法,this
+[zh.javascript.info](https://zh.javascript.info/object-methods)  
+> this 的值是在代码运行时计算出来的，它取决于代码上下文。  
+  
+> 严格模式下的 this 值为 undefined。  
+  
+> 在非严格模式的情况下，this 将会是 全局对象  
+  
+> 箭头函数有些特别：它们没有自己的 this。如果我们在这样的函数中引用 this，this 值取决于外部“正常的”函数。  
+  
+> 以“方法”的语法调用函数时：object.method()，调用过程中的 this 值是 object。  
+
+``` js
+let user = {
+  name: "Hehoku",
+  age: 18,
+  sayHi() {
+    let arrow = () => console.log(this.name);
+    arrow();
+  },
+  sayHiInObject: function () {
+    console.log(this.name);
+  },
+  arrowFunction: () => console.log(this)
+};
+
+function sayHi() {
+  console.log(this.name);
+}
+
+user.sayHi = sayHi;
+
+user.sayHi(); // Hehoku
+
+user.arrowFunction(); // undefined
+```
