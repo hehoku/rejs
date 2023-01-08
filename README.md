@@ -234,3 +234,8 @@ user.arrowFunction(); // undefined
 > “首字母大写”是一个共同的约定，以明确表示一个函数将被使用 new 来运行。
 
 > 在一个函数内部，我们可以使用 new.target 属性来检查它是否被使用 new 进行调用了。 对于常规调用，它为 undefined，对于使用 new 的调用，则等于该函数
+
+### 可选链 `?.`
+obj?.prop —— 如果 obj 存在则返回 obj.prop，否则返回 undefined。
+obj?.[prop] —— 如果 obj 存在则返回 obj[prop]，否则返回 undefined。
+obj.method?.() —— 如果 obj.method 存在则调用 obj.method()，否则返回 undefined。
