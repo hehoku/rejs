@@ -248,3 +248,12 @@ obj.method?.() —— 如果 obj.method 存在则调用 obj.method()，否则返
 > 它们可以从字符串中“读取”数字，直到无法读取为止。如果发生 error，则返回收集到的数字。函数 parseInt 返回一个整数，而 parseFloat 返回一个浮点数：
 
 > Math.random() 返回一个从 0 到 1 的随机数（不包括 1）
+
+### 字符串
+| 方法      | 选择方式 | 负值参数 |
+| ----------- | ----------- | ----------- |
+| `slice(start, end)` | 从 start 到 end，不含 end | 允许 |
+| `substring(start, end) | 从 start 到 end，不含 end | 负值被视为 0 |
+| `substr(start, length)` | 从 start 开始获取长为 length 的字符串 | 允许 start 为负数 |
+
+> `str.repea(n)` 重复字符串 n 次
