@@ -239,3 +239,12 @@ user.arrowFunction(); // undefined
 obj?.prop —— 如果 obj 存在则返回 obj.prop，否则返回 undefined。
 obj?.[prop] —— 如果 obj 存在则返回 obj[prop]，否则返回 undefined。
 obj.method?.() —— 如果 obj.method 存在则调用 obj.method()，否则返回 undefined。
+
+### 数字类型
+> 如果我们想直接在一个数字上调用一个方法，比如上面例子中的 toString，那么我们需要在它后面放置两个点 ..。
+
+> 值 “NaN” 是独一无二的，它不等于任何东西，包括它自身：
+
+> 它们可以从字符串中“读取”数字，直到无法读取为止。如果发生 error，则返回收集到的数字。函数 parseInt 返回一个整数，而 parseFloat 返回一个浮点数：
+
+> Math.random() 返回一个从 0 到 1 的随机数（不包括 1）
