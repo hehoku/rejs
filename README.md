@@ -338,7 +338,6 @@ alert( [1,2] + 1 ); // "1,21"
 ```
 
 ### 数组方法
-# 数组方法
 [zh.javascript.info](https://zh.javascript.info/array-methods)
 > `arr.splice(start[, deleteCount, elem1, ..., elemN])`
 > 
@@ -385,4 +384,56 @@ let value = arr.reduce(function(accumulator, item, index, array) {
 > 数组是基于对象的，不构成单独的语言类型, 所以 typeof 不能帮助从数组中区分出普通对象：
 
 > thisArg 参数的值在 func 中变为 this。 
+>
+>
 
+
+#### 练习题
+1. 编写函数 camelize(str) 将诸如 “my-short-string” 之类的由短划线分隔的单词变成骆驼式的 “myShortString”。
+即：删除所有短横线，并将短横线后的每一个单词的首字母变为大写。
+```js
+// 先将短划线去除，将短横线后的每一个首字母变成大写，再拼接
+function camelize(str) {
+  const result = str.split("-").map((item, index) => {
+    if (index === 0) {
+      return item;
+    } else {
+      const newItem = item[0].toUpperCase() + item.slice(1);
+      return newItem;
+    }
+  }).join("")
+  console.log(result);
+  return result;
+}
+```
+
+2. 写一个函数 filterRange(arr, a, b)，该函数获取一个数组 arr，在其中查找数值大于或等于 a，且小于或等于 b 的元素，并将结果以数组的形式返回。该函数不应该修改原数组。它应该返回新的数组。
+```js
+function filterRange(arr, a, b) {
+  const result = arr.filter((item) => {
+    if (item >= a && item <= b) {
+      return item;
+    }
+  });
+  return result;
+}
+```
+
+3. 写一个函数 filterRangeInPlace(arr, a, b)，该函数获取一个数组 arr，并删除其中介于 a 和 b 区间以外的所有值。检查：a ≤ arr[i] ≤ b。该函数应该只修改数组。它不应该返回任何东西。
+```js
+function filterRangeInPlace(arr, a, b) {
+  for (let i = 0; i < arr.length; i++) {
+    let item = arr[i];
+    if (item < a || item > b) {
+      arr.splice(i, 1);
+      i--
+    }
+  }
+}
+```
+
+4. 降序排列
+```js
+let arr = [1, 3, 5, 0];
+arr.sort((a, b) => b - a);
+```
