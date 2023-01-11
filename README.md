@@ -336,3 +336,53 @@ alert( [] + 1 ); // "1"
 alert( [1] + 1 ); // "11"
 alert( [1,2] + 1 ); // "1,21"
 ```
+
+### 数组方法
+# 数组方法
+[zh.javascript.info](https://zh.javascript.info/array-methods)
+> `arr.splice(start[, deleteCount, elem1, ..., elemN])`
+> 
+> 它从索引 start 开始修改 arr：删除 deleteCount 个元素并在当前位置（如果没有删除，就是在当前位置之前）插入 elem1, ..., elemN。最后返回被
+> 删除的元素所组成的数组。
+
+> `arr.slice([start], [end])`
+>   
+>  它会返回一个新数组，将所有从索引 start 到 end（不包括 end）的数组项复制到一个新的数组。start 和 end 都可以是负数
+
+> 也可以不带参数地调用它：arr.slice() 会创建一个 arr 的副本。
+
+> arr.concat 创建一个新数组，其中包含来自于其他数组和其他项的值。 
+>  
+
+> 如果类数组对象具有 Symbol.isConcatSpreadable 属性，那么它就会被 concat 当作一个数组来处理：此对象中的元素将被添加：
+
+> indexOf 和 includes 使用严格相等 === 进行比较。
+
+> 方法 includes 的一个次要但值得注意的特性是，它可以正确处理 NaN，这与 indexOf 不同： 
+
+> find 方法搜索的是使函数返回 true 的第一个（单个）元素。 
+>  如果需要匹配的有很多，我们可以使用 arr.filter(fn)。
+
+> arr.map 对数组的每个元素都调用函数，并返回结果数组。
+
+> arr.sort 方法对数组进行 原位（in-place） 排序，更改元素的顺序, 这些元素默认情况下被按字符串进行排序。
+
+> 比较函数只需要返回一个正数表示“大于”，一个负数表示“小于”。
+
+> 对于许多字母，最好使用 str.localeCompare 方法正确地对字母进行排序
+
+```js
+let value = arr.reduce(function(accumulator, item, index, array) {
+  // ...
+}, [initial]);
+```
+>  该函数一个接一个地应用于所有数组元素，并将其结果“搬运（carry on）”到下一个调用。 
+
+> 第一个参数本质上是累加器，用于存储所有先前执行的组合结果。最后，它成为 reduce 的结果。
+
+> 如果数组为空，那么在没有初始值的情况下调用 reduce 会导致错误,所以建议始终指定初始值。 
+
+> 数组是基于对象的，不构成单独的语言类型, 所以 typeof 不能帮助从数组中区分出普通对象：
+
+> thisArg 参数的值在 func 中变为 this。 
+
