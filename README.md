@@ -437,3 +437,76 @@ function filterRangeInPlace(arr, a, b) {
 let arr = [1, 3, 5, 0];
 arr.sort((a, b) => b - a);
 ```
+
+5. 我们有一个字符串数组 arr。我们希望有一个排序过的副本，但保持 arr 不变。创建一个函数 copySorted(arr) 返回这样一个副本。
+```js
+function copySorted(arr) {
+  return arr.slice().sort()
+}
+```
+
+6. 创建一个构造函数 Calculator，以创建“可扩展”的 calculator 对象。
+   1) 首先，实现 calculate(str) 方法，该方法接受像 "1 + 2" 这样格式为“数字 运算符 数字”（以空格分隔）的字符串，并返回结果。该方法需要能够理解加号 + 和减号 -。
+      
+      用法示例：
+      ```js
+      let calc = new Calculator;
+      alert( calc.calculate("3 + 7") ); // 10
+      ```
+   2) 然后添加方法 addMethod(name, func)，该方法教 calculator 进行新操作。它需要运算符 name 和实现它的双参数函数 func(a,b)。
+
+      例如，我们添加乘法 *，除法 / 和求幂 **：
+      ```js
+      let powerCalc = new Calculator;
+      powerCalc.addMethod("*", (a, b) => a * b);
+      powerCalc.addMethod("/", (a, b) => a / b);
+      powerCalc.addMethod("**", (a, b) => a ** b);
+
+      let result = powerCalc.calculate("2 ** 3");
+      alert( result ); // 8
+      ```
+    - 此任务中没有括号或复杂的表达式。
+    - 数字和运算符之间只有一个空格。
+    - 你可以自行选择是否添加错误处理功能。
+  ```js
+  function Calculate() {
+    this.method = {
+      "+": (a, b) => a + b,
+      "-": (a, b) => a - b
+    };
+
+    this.calculate = function (str) {
+      // 将 str 提取出来
+      const splitItem = str.split(" ");
+      const a = +splitItem[0];
+      const op = splitItem[1];
+      const b = +splitItem[2];
+
+      if (!this.method[op] || isNaN(a) || isNaN(b)) {
+        return NaN;
+      }
+
+      return this.method[op](a, b)
+    }
+
+    this.addMethod = function(name, func) {
+      this.method[name] = func
+    }
+  }
+
+  const calculator = new Calculate();
+
+  let result = calculator.calculate("2 + 1");
+  console.log(result)
+
+  result = calculator.calculate("2 - 1");
+  console.log(result);
+
+  calculator.addMethod("*", (a, b) => a * b);
+  result = calculator.calculate("2 * 1");
+  console.log(result);
+
+  calculator.addMethod("**", (a, b) => a ** b);
+  result = calculator.calculate("2 ** 3");
+  console.log(result);
+  ```
