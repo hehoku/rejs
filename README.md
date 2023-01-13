@@ -510,3 +510,64 @@ function copySorted(arr) {
   result = calculator.calculate("2 ** 3");
   console.log(result);
   ```
+
+7. 映射到Names，你有一个 user 对象数组，每个对象都有 user.name。编写将其转换为 names 数组的代码。
+示例：
+```js
+let john = { name: "John", age: 25 };
+let pete = { name: "Pete", age: 30 };
+let mary = { name: "Mary", age: 28 };
+
+let users = [ john, pete, mary ];
+
+let names = users.map(item => item.name)
+
+alert( names ); // John, Pete, Mary
+```
+
+8. 映射到对象，你有一个 user 对象数组，每个对象都有 name，surname 和 id。
+编写代码以该数组为基础，创建另一个具有 id 和 fullName 的对象数组，
+其中 fullName 由 name 和 surname 生成。
+```js
+let john = { name: "John", surname: "Smith", id: 1 };
+let pete = { name: "Pete", surname: "Hunt", id: 2 };
+let mary = { name: "Mary", surname: "Key", id: 3 };
+
+let users = [ john, pete, mary ];
+
+let usersMapped = users.map((item) => ({
+  fullName: `${item.name} ${item.surname}`,
+  id: item.id,
+}));
+
+/*
+usersMapped = [
+  { fullName: "John Smith", id: 1 },
+  { fullName: "Pete Hunt", id: 2 },
+  { fullName: "Mary Key", id: 3 }
+]
+*/
+
+alert( usersMapped[0].id ) // 1
+alert( usersMapped[0].fullName ) // John Smith
+```
+
+9. 编写函数 sortByAge(users) 获得对象数组的 age 属性，并根据 age 对这些对象数组进行排序。
+```js
+let john = { name: "John", age: 25 };
+let pete = { name: "Pete", age: 30 };
+let mary = { name: "Mary", age: 28 };
+
+let arr = [ pete, john, mary ];
+
+function sortByAge(arr) {
+  arr.sort((a, b) => a.age - b.age)
+}
+
+sortByAge(arr);
+
+// now: [john, mary, pete]
+alert(arr[0].name); // John
+alert(arr[1].name); // Mary
+alert(arr[2].name); // Pete
+```
