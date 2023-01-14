@@ -587,3 +587,18 @@ function shuffle(arr) {
 
 shuffle(arr);
 ```
+
+11. 编写 getAverageAge(users) 函数，该函数获取一个具有 age 属性的对象数组，并返回平均年龄。
+```js
+let john = { name: "John", age: 25 };
+let pete = { name: "Pete", age: 30 };
+let mary = { name: "Mary", age: 29 };
+
+let arr = [ john, pete, mary ];
+
+function getAverageAge(arr) {
+  return arr.reduce((prev, item) => prev + item.age, 0) / arr.length;
+}
+
+alert( getAverageAge(arr) ); // (25 + 30 + 29) / 3 = 28
+```
