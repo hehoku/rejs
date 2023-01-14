@@ -571,3 +571,19 @@ alert(arr[0].name); // John
 alert(arr[1].name); // Mary
 alert(arr[2].name); // Pete
 ```
+
+10. 随机排列数组, 编写函数 shuffle(array) 来随机排列数组的元素。所有元素顺序应该具有相等的概率。
+```js
+let arr = [1, 2, 3];
+
+function shuffle(arr) {
+  // 逆向遍历数组，并将每个元素与前面的随机的一个元素交换位置
+  for (let i = arr.length - 1; i > 0; i--) {
+    // 从 0 到 i 之间随机选择一个元素
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+shuffle(arr);
+```
