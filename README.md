@@ -602,3 +602,50 @@ function getAverageAge(arr) {
 
 alert( getAverageAge(arr) ); // (25 + 30 + 29) / 3 = 28
 ```
+
+12. 数组去重，创建一个函数 unique(arr)，返回去除重复元素后的数组 arr。
+```js
+function unique(arr) {
+  let arrObj = {};
+  for (let i = 0; i < arr.length; i++) {
+    arrObj[arr[i]] = true;
+  }
+  return Object.keys(arrObj);
+}
+
+let strings = ["Hare", "Krishna", "Hare", "Krishna",
+  "Krishna", "Krishna", "Hare", "Hare", ":-O"
+];
+
+alert( unique(strings) ); // Hare, Krishna, :-O
+```
+
+13. 从数组创建键对象：假设我们收到了一个用户数组，形式为：{id:..., name:..., age:... }。
+创建一个函数 groupById(arr) 从该数组创建对象，以 id 为键（key），数组项为值。在这个任务里
+我们假设 id 是唯一的。没有两个具有相同 id 的数组项。请在解决方案中使用数组的 .reduce 方法。
+```js
+let users = [
+  {id: 'john', name: "John Smith", age: 20},
+  {id: 'ann', name: "Ann Smith", age: 24},
+  {id: 'pete', name: "Pete Peterson", age: 31},
+];
+
+function groupById(users) {
+  return users.reduce((obj, item) => {
+    obj[item.id] = item;
+    return obj;
+  }, {})
+}
+
+let usersById = groupById(users);
+
+/*
+// 调用函数后，我们应该得到：
+
+usersById = {
+  john: {id: 'john', name: "John Smith", age: 20},
+  ann: {id: 'ann', name: "Ann Smith", age: 24},
+  pete: {id: 'pete', name: "Pete Peterson", age: 31},
+}
+*/
+```
