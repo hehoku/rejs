@@ -649,3 +649,53 @@ usersById = {
 }
 */
 ```
+
+### Iterable Object(可迭代对象)
+[zh.javascript.info](https://zh.javascript.info/iterable)
+> 可迭代（Iterable） 对象是数组的泛化。这个概念是说任何对象都可以被定制为可在 for..of 循环中使用的对象。
+
+> 为了让 range 对象可迭代（也就让 for..of 可以运行）我们需要为对象添加一个名为 Symbol.iterator 的方法（一个专门用于使对象可迭代的内建 symbol）。
+
+> 当 for..of 循环启动时，它会调用这个方法（如果没找到，就会报错）。这个方法必须返回一个 迭代器（iterator） —— 一个有 next 方法的对象。
+
+> 当 for..of 循环希望取得下一个数值，它就调用这个对象的 next() 方法。
+
+> next() 方法返回的结果的格式必须是 {done: Boolean, value: any}，当 done=true 时，表示循环结束，否则 value 是下一个值。
+
+```js
+let range = {
+  from: 1,
+  to: 5,
+};
+
+range[Symbol.iterator] = function () {
+  return {
+    current: this.from,
+    last: this.to,
+    next() {
+      if (this.current <= this.last) {
+        return {
+          done: false,
+          value: this.current++,
+        };
+      } else {
+        return { done: true };
+      }
+    },
+  };
+};
+
+for (let num of range) {
+  console.log(num);
+}
+```
+
+> Iterable 如上所述，是实现了 Symbol.iterator 方法的对象。
+
+> Array-like 是有索引和 length 属性的对象，所以它们看起来很像数组。
+
+> 字符串即是可迭代的（for..of 对它们有效），又是类数组的（它们有数值索引和 length 属性）。
+
+> Array.from 可以接受一个可迭代或类数组的值，并从中获取一个“真正的”数组。
+
+> `obj[Symbol.iterator]()` 的结果被称为 迭代器（iterator）
