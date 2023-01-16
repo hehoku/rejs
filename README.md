@@ -699,3 +699,91 @@ for (let num of range) {
 > Array.from 可以接受一个可迭代或类数组的值，并从中获取一个“真正的”数组。
 
 > `obj[Symbol.iterator]()` 的结果被称为 迭代器（iterator）
+
+## Map and Set
+# Map and Set（映射和集合）
+[zh.javascript.info](https://zh.javascript.info/map-set)
+> Map 是一个带键的数据项的集合，就像一个 Object 一样。 但是它们最大的差别是 Map 允许任何类型的键（key）。
+
+> 与对象不同，键不会被转换成字符串。键可以是任何类型。
+
+> Map 使用 SameValueZero 算法来比较键是否相等。它和严格等于 === 差不多，但区别是 NaN 被看成是等于 NaN。所以 NaN 也可以被用作键。
+
+> 每一次 map.set 调用都会返回 map 本身，所以我们可以进行“链式”调用：
+
+> map.keys() —— 遍历并返回一个包含所有键的可迭代对象， 
+>   map.values() —— 遍历并返回一个包含所有值的可迭代对象， 
+>   map.entries() —— 遍历并返回一个包含所有实体 [key, value] 的可迭代对象，for..of 在默认情况下使用的就是这个。
+
+> 如果我们想从一个已有的普通对象（
+>         plain
+>          object）来创建一个 Map，那么我们可以使用内建方法 Object.entries(obj)，该方法返回对象的键/值对数组，该数组格式完全按照 Map 所需的格式。
+
+> Object.fromEntries 方法的作用是相反的：给定一个具有 [key, value] 键值对的数组，它会根据给定数组创建一个对象：
+
+> Set 是一个特殊的类型集合 —— “值的集合”（没有键），它的每一个值只能出现一次。 
+>  
+
+> Set 内部对唯一性检查进行了更好的优化。
+
+> 可以使用 for..of 或 forEach 来遍历 Set：
+
+> forEach 的回调函数有三个参数：一个 value，然后是 同一个值 valueAgain，最后是目标对象。
+
+> new Map([iterable]) —— 创建 map，可选择带有 [key,value] 对的 iterable（例如数组）来进行初始化。
+
+### 练习题
+1. 定义 arr 为一个数组。创建一个函数 unique(arr)，该函数返回一个由 arr 中所有唯一元素所组成的数组。
+```js
+function unique(arr) {
+  return Array.from(new Set(arr));
+}
+
+let values = ["Hare", "Krishna", "Hare", "Krishna",
+  "Krishna", "Krishna", "Hare", "Hare", ":-O"
+];
+
+alert( unique(values) ); // Hare, Krishna, :-O
+```
+
+2. 过滤字谜
+Anagrams 是具有相同数量相同字母但是顺序不同的单词。如：
+```md
+nap - pan
+ear - are - era
+cheaters - hectares - teachers
+```
+写一个函数 aclean(arr)，它返回被清除了字谜（anagrams）的数组。
+对于所有的字谜（anagram）组，都应该保留其中一个词，但保留的具体是哪一个并不重要。
+```js
+let arr = ["nap", "teachers", "cheaters", "PAN", "ear", "era", "hectares"];
+
+function aclean(arr) {
+  // 遍历数组，将数组的每一项的字符串大小写进行排序，然后作为 map 的 key，
+  // 将该项的字符串本身作为 value 保存
+  // 然后返回 map 的 values
+  let map = new Map();
+  arr.map(item => {
+    let sortedStringArrOfItem = item.toLowerCase().split("").sort("").join("");
+    map.set(sortedStringArrOfItem, item);
+  });
+  return Array.from(map.values());
+}
+
+alert( aclean(arr) ); // "nap,teachers,ear" or "PAN,cheaters,era"
+```
+
+3. 我们期望使用 map.keys() 得到一个数组，然后使用例如 .push 等特定的方法对其进行处理。
+修复下面代码
+```js
+let map = new Map();
+
+map.set("name", "John");
+
+let keys = Array.from(map.keys());
+
+// Error: keys.push is not a function
+keys.push("more");
+
+console.log(keys);
+```
