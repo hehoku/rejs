@@ -701,7 +701,6 @@ for (let num of range) {
 > `obj[Symbol.iterator]()` 的结果被称为 迭代器（iterator）
 
 ## Map and Set
-# Map and Set（映射和集合）
 [zh.javascript.info](https://zh.javascript.info/map-set)
 > Map 是一个带键的数据项的集合，就像一个 Object 一样。 但是它们最大的差别是 Map 允许任何类型的键（key）。
 
@@ -786,4 +785,66 @@ let keys = Array.from(map.keys());
 keys.push("more");
 
 console.log(keys);
+```
+
+## WeakMap and WeakSet
+为什么称之为 `Weak*`，因为它是弱引用，不会阻止垃圾回收机制对作为键的对象的回收。
+[zh.javascript.info](https://zh.javascript.info/weakmap-weakset)
+> JavaScript 引擎在值“可达”和可能被使用时会将其保持在内存中。
+
+> WeakMap 在这方面有着根本上的不同。它不会阻止垃圾回收机制对作为键的对象（key object）的回收。
+
+> WeakMap 和 Map 的第一个不同点就是，WeakMap 的键必须是对象，不能是原始值：
+
+> 如果我们在 weakMap 中使用一个对象作为键，并且没有其他对这个对象的引用 —— 该对象将会被从内存（和map）中自动清除。
+
+> WeakMap 不支持迭代以及 keys()，values() 和 entries() 方法。所以没有办法获取 WeakMap 的所有键或值。
+
+> WeakMap 只有以下的方法： 
+>   
+>   weakMap.get(key) 
+>   weakMap.set(key, value) 
+>   weakMap.delete(key) 
+>   weakMap.has(key)
+
+> 从技术上讲，WeakMap 的当前元素的数量是未知的。JavaScript 引擎可能清理了其中的垃圾，可能没清理，也可能清理了一部分。因此，暂不支持访问 WeakMap 的所有键/值的方法。
+
+> WeakMap 的主要应用场景是 额外数据的存储。
+
+> 我们可以存储（“缓存”）函数的结果，以便将来对同一个对象的调用可以重用这个结果。
+
+### 练习题
+1. 存储 unread 标识，你的代码可以访问它，但是 message 是由其他人的代码管理的。该代码会定期添加新消息，
+删除旧消息，但是你不知道这些操作确切的发生时间。现在，你应该使用什么数据结构来保存关于消息“是否已读”的
+信息？该结构必须很适合对给定的 message 对象给出“它读了吗？”的答案。
+P.S. 当一个消息被从 messages 中删除后，它应该也从你的数据结构中消失。
+P.S. 我们不能修改 message 对象，例如向其添加我们的属性。因为它们是由其他人的代码管理的，我们修改该数据
+可能会导致不好的后果。
+```js
+let messages = [
+  { text: "Hello", from: "John" },
+  { text: "How goes?", from: "John" },
+  { text: "See you soon", from: "Alice" },
+];
+
+let readMessage = new WeakSet();
+
+// 假如消息已读
+readMessage.add(messages[0]);
+readMessage.add(messages[1]);
+readMessage.add(messages[0]);
+
+console.log("Read message 0: " + readMessage.has(messages[0]));
+```
+
+2. 与上题类似，现在的问题是：你建议采用什么数据结构来保存信息：“消息是什么时候被阅读的？”。
+```js
+let messages = [
+  { text: "Hello", from: "John" },
+  { text: "How goes?", from: "John" },
+  { text: "See you soon", from: "Alice" },
+];
+
+let readDate = new WeakMap();
+readDate.set(messages[0], new Date());
 ```
