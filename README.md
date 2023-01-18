@@ -848,3 +848,79 @@ let messages = [
 let readDate = new WeakMap();
 readDate.set(messages[0], new Date());
 ```
+
+## Object.keys, values, entries
+[zh.javascript.info](https://zh.javascript.info/keys-values-entries)
+> Object.keys(obj) —— 返回一个包含该对象所有的键的数组。 
+>   Object.values(obj) —— 返回一个包含该对象所有的值的数组。 
+>   Object.entries(obj) —— 返回一个包含该对象所有 [key, value] 键值对的数组。
+
+> Object.* 方法返回的是“真正的”数组对象，而不只是一个可迭代对象。
+
+> 对象缺少数组存在的许多方法，例如 map 和 filter 等。 
+>  如果我们想应用它们，那么我们可以使用 Object.entries，然后使用 Object.fromEntries： 
+>   
+>   使用 Object.entries(obj) 从 obj 获取由键/值对组成的数组。 
+>   对该数组使用数组方法，例如 map，对这些键/值对进行转换。 
+>   对结果数组使用 Object.fromEntries(array) 方法，将结果转回成对象。
+```js
+let user = {
+  name: "John",
+  age: 30
+};
+
+// 遍历所有的值
+for (let value of Object.values(user)) {
+  alert(value); // John, then 30
+}
+
+let prices = {
+  banana: 1,
+  orange: 2,
+  meat: 4,
+};
+
+let doublePrices = Object.fromEntries(
+  // 将价格转换为数组，将每个键/值对映射为另一对
+  // 然后通过 fromEntries 再将结果转换为对象
+  Object.entries(prices).map(entry => [entry[0], entry[1] * 2])
+);
+
+alert(doublePrices.meat); // 8
+```
+
+### 练习题
+1. 有一个带有任意数量薪水的 salaries 对象。
+编写函数 sumSalaries(salaries)，该函数使用 Object.values 和 for..of 循环返回所有薪水的总和。
+如果 salaries 是空对象，那么结果必须是 0。
+```js
+let salaries = {
+  John: 100,
+  Pete: 300,
+  Mary: 250,
+};
+
+function sumSalaries(salaries) {
+  let result = 0;
+  for (let item of Object.values(salaries)) {
+    result += item;
+  }
+  return result;
+}
+
+console.log(sumSalaries(salaries)); // 650
+```
+
+2. 计算属性数量，写一个函数 count(obj)，该函数返回对象中的属性的数量：
+```js
+let user = {
+  name: 'John',
+  age: 30
+};
+
+function count(obj) {
+  return Object.keys(obj).length;
+}
+
+console.log( count(user) ); // 2
+```
