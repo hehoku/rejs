@@ -924,3 +924,77 @@ function count(obj) {
 
 console.log( count(user) ); // 2
 ```
+
+## 解构赋值
+[zh.javascript.info](https://zh.javascript.info/destructuring-assignment)
+> 等号右侧可以是任何可迭代对象
+
+> 可以在等号左侧使用任何“可以被赋值的”东西。
+
+> 使用解构赋值来交换两个变量的值
+
+> 如果数组比左边的列表长，那么“其余”的数组项会被省略。
+
+> 如果我们还想收集其余的数组项 —— 我们可以使用三个点 "..." 来再加一个参数以获取其余数组项：
+
+> 如果数组比左边的变量列表短，这里不会出现报错。缺少对应值的变量都会被赋 undefined： 
+
+> 如果我们想要一个“默认”值给未赋值的变量，我们可以使用 = 来提供： 
+
+> 如果我们想把一个属性赋值给另一个名字的变量，那么我们可以使用冒号来设置变量名称：
+
+> 对于可能缺失的属性，我们可以使用 "=" 设置默认值
+
+### 练习题
+1. 我们有一个对象：写一个解构赋值语句使得：
+name 属性赋值给变量 name。
+years 属性赋值给变量 age。
+isAdmin 属性赋值给变量 isAdmin（如果属性缺失则取默认值 false）。
+```js
+let user = { name: 'John', years: 30 };
+
+let { name, years, isAdmin = false } = user;
+
+console.log(name);
+console.log(years);
+console.log(isAdmin);
+```
+
+2. 最高薪资，这儿有一个 salaries 对象：新建一个函数 topSalary(salaries)，返回收入最高的人的姓名。
+
+如果 salaries 是空的，函数应该返回 null。
+如果有多个收入最高的人，返回其中任意一个即可。
+P.S. 使用 Object.entries 和解构语法来遍历键/值对。
+```js
+let salaries = {
+  John: 100,
+  Pete: 300,
+  Mary: 250,
+};
+
+function isEmpty(obj) {
+  for (let key in obj) {
+    return false;
+  }
+  return true;
+}
+
+function topSalary(salaries) {
+  if (isEmpty(salaries)) {
+    return null;
+  }
+
+  let salariesArr = Object.entries(salaries);
+  let [topPerson, topSalary] = salariesArr[0];
+
+  for (let [person, salary] of salariesArr) {
+    if (topSalary < salary) {
+      topPerson = person;
+      topSalary = salary;
+    }
+  }
+  return topPerson;
+}
+
+console.log(topSalary(salaries));
+```
