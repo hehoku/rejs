@@ -998,3 +998,109 @@ function topSalary(salaries) {
 
 console.log(topSalary(salaries));
 ```
+
+## 日期与时间
+[zh.javascript.info](https://zh.javascript.info/date)
+> new Date() 
+>    不带参数 —— 创建一个表示当前日期和时间的 Date 对象
+
+> new Date(milliseconds) 
+>    创建一个 Date 对象，其时间等于 1970 年 1 月 1 日 UTC+0 之后经过的毫秒数
+
+> 在 01.01.1970 之前的日期带有负的时间戳
+
+> 如果只有一个参数，并且是字符串，那么它会被自动解析。该算法与 Date.parse 所使用的算法相同
+
+> new Date(year, month, date, hours, minutes, seconds, ms) 
+>    使用当前时区中的给定组件创建日期。只有前两个参数是必须的。
+
+> year 应该是四位数
+
+> month 计数从 0（一月）开始，到 11（十二月）结束。
+
+> date 是当月的具体某一天，如果缺失，则为默认值 1。
+
+> 如果 hours/minutes/seconds/ms 缺失，则均为默认值 0。
+
+> getFullYear() 
+>    
+>   
+>     获取年份（4 位数） 
+>    
+>    getMonth() 
+>    
+>   
+>     获取月份，从 0 到 11。 
+>    
+>    getDate() 
+>    
+>   
+>     获取当月的具体日期，
+
+> getHours()，getMinutes()，getSeconds()，getMilliseconds() 
+>    
+>   
+>     获取相应的时间组件。
+
+> getDay() 
+>    
+>   
+>     获取一周中的第几天，从 0（星期日）到 6（星期六）
+
+> 自动校准 是 Date 对象的一个非常方便的特性。我们可以设置超范围的数值，它会自动校准。
+
+> Date.now()，它会返回当前的时间戳。 
+>  它相当于 new Date().getTime()，但它不会创建中间的 Date 对象。因此它更快，而且不会对垃圾回收造成额外的压力。
+
+### 练习题
+1. 创建一个 Date 对象，日期是：Feb 20, 2012, 3:12am。时区是当地时区。
+```js
+let date = new Date(2012, 1, 20, 3, 12);
+console.log(date);
+```
+
+2. 编写一个函数 getWeekDay(date) 以短格式来显示一个日期的星期数：
+‘MO’，‘TU’，‘WE’，‘TH’，‘FR’，‘SA’，‘SU’。
+```js
+let date = new Date(2012, 0, 3); // 3 Jan 2012
+
+function getWeekDay(date) {
+  let dayNum = date.getDay();
+  let dayStringArr = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+  return dayStringArr[dayNum];
+}
+
+console.log(getWeekDay(date));
+```
+
+3. 欧洲国家的星期计算是从星期一（数字 1）开始的，然后是星期二（数字 2），直到星期日（数字 7）。
+编写一个函数 getLocalDay(date)，并返回日期的欧洲式星期数。
+```js
+let date = new Date(2023, 0, 15);
+
+function getLocalDay(date) {
+  let dayNum = date.getDay();
+  if (dayNum === 0) {
+    return 7;
+  } else {
+    return dayNum;
+  }
+}
+
+console.log(getLocalDay(date));
+```
+
+4. 写一个函数 getDateAgo(date, days)，返回特定日期 date 往前 days 天是哪个月的哪一天。
+```JavaScript
+let date = new Date(2015, 0, 2);
+
+function getDateAgo(date, days) {
+  let dateCopy = new Date(date);
+  dateCopy.setDate(date.getDate() - days);
+  return dateCopy.getDate();
+}
+
+console.log(getDateAgo(date, 1)); // 1, (1 Jan 2015)
+console.log(getDateAgo(date, 2)); // 31, (31 Dec 2014)
+console.log(getDateAgo(date, 365)); // 2, (2 Jan 2014)
+```
