@@ -1104,3 +1104,104 @@ console.log(getDateAgo(date, 1)); // 1, (1 Jan 2015)
 console.log(getDateAgo(date, 2)); // 31, (31 Dec 2014)
 console.log(getDateAgo(date, 365)); // 2, (2 Jan 2014)
 ```
+
+5. 写一个函数 getLastDayOfMonth(year, month) 返回 month 月的最后一天。
+时候是 30，有时是 31，甚至在二月的时候会是 28/29。
+```js
+function isLeapYear(year) {
+  if (year % 4 === 0) {
+    if (year % 100 === 0) {
+      if (year % 400 === 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  } else {
+    return false;
+  }
+}
+
+function getLastDayOfMonth(year, month) {
+  switch (month + 1) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+      return 31;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+      return 30;
+    case 2:
+      if (isLeapYear(year)) {
+        return 29;
+      } else {
+        return 28;
+      }
+  }
+}
+
+console.log(getLastDayOfMonth(2023, 1));
+```
+
+6. 写一个函数 getSecondsToday()，返回今天已经过去了多少秒？
+```js
+function getSecondsToday() {
+  let now = new Date();
+  let today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let diff = now - today;
+  return Math.round(diff / 1000);
+}
+
+console.log(getSecondsToday());
+```
+
+7. 写一个函数 getSecondsToTomorrow()，返回距离明天的秒数。
+```js
+function getSecondsToTomorrow() {
+  let now = new Date();
+  let tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  let diff = tomorrow - now;
+  return Math.round(diff / 1000);
+}
+
+console.log(getSecondsToTomorrow());
+```
+
+8. 写一个函数 formatDate(date)，能够对 date 进行如下格式化：
+
+如果 date 距离现在不到 1 秒，输出 "right now"。
+否则，如果 date 距离现在不到 1 分钟，输出 "n sec. ago"。
+否则，如果不到 1 小时，输出 "m min. ago"。
+否则，以 "DD.MM.YY HH:mm" 格式输出完整日期。即："day.month.year hours:minutes"，
+全部以两位数格式表示，例如：31.12.16 10:00。
+```js
+function formatDate(date) {
+  let now = new Date();
+  let diff = now - date;
+  if (diff < 1000) {
+    return "right now";
+  } else if (diff < 60 * 1000) {
+    return `${Math.round(diff / 1000)} sec. ago`;
+  } else if (diff < 60 * 60 * 1000) {
+    return `${Math.round(diff / (60 * 1000))} min. ago`;
+  } else {
+    let y = (date.getFullYear() % 100).toString().padStart(2, "0");
+    let month = (date.getMonth() + 1).toString().padStart(2, "0");
+    let d = date.getDate().toString().padStart(2, "0");
+    let h = date.getHours().toString().padStart(2, "0");
+    let minute = date.getMinutes().toString().padStart(2, "0");
+
+    return `${d}.${month}.${y} ${h}:${minute}`;
+  }
+}
+
+console.log(formatDate(new Date(2023, 0, 20)));
+```
