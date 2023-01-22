@@ -1205,3 +1205,76 @@ function formatDate(date) {
 
 console.log(formatDate(new Date(2023, 0, 20)));
 ```
+
+## JSON 方法，toJSON
+# JSON 方法，toJSON
+[zh.javascript.info](https://zh.javascript.info/json)
+> JSON.stringify 将对象转换为 JSON
+
+> JSON.parse 将 JSON 转换回对象。
+
+> 方法 JSON.stringify(student) 接收对象并将其转换为字符串。
+
+> JSON 编码的对象与对象字面量有几个重要的区别： 
+>   
+>   字符串使用双引号。JSON 中没有单引号或反引号。
+
+> 对象属性名称也是双引号的。这是强制性的。
+
+> JSON 是语言无关的纯数据规范，因此一些特定于 JavaScript 的对象属性会被 JSON.stringify 跳过。
+
+> 函数属性（方法）。 
+>   Symbol 类型的键和值。 
+>   存储 undefined 的属性。
+
+> 重要的限制：不得有循环引用。
+> JSON.stringify(value, replacer, spaces) 的第三个参数是用于优化格式的空格数量。
+
+### 练习题
+1. 将 user 转换为 JSON，然后将其转换回到另一个变量。
+```js
+let user = {
+  name: "John Smith",
+  age: 35,
+};
+
+let userJSON = JSON.stringify(user);
+console.log(userJSON);
+
+let userValue = JSON.parse(userJSON);
+console.log(userValue);
+```
+
+2. 在简单循环引用的情况下，我们可以通过名称排除序列化中违规的属性。
+但是，有时我们不能只使用名称，因为它既可能在循环引用中也可能在常规属性中使用。因此，我们可以
+通过属性值来检查属性。编写 replacer 函数，移除引用 meetup 的属性，并将其他所有属性序列化：
+```js
+let room = {
+  number: 23,
+};
+
+let meetup = {
+  title: "Conference",
+  occupiedBy: [{ name: "John" }, { name: "Alice" }],
+  place: room,
+};
+
+// 循环引用
+room.occupiedBy = meetup;
+meetup.self = meetup;
+
+console.log(
+  JSON.stringify(meetup, function replacer(key, value) {
+    /* your code */
+    return key !== "" && value === meetup ? undefined : value;
+  })
+);
+
+/* 结果应该是：
+{
+  "title":"Conference",
+  "occupiedBy":[{"name":"John"},{"name":"Alice"}],
+  "place":{"number":23}
+}
+*/
+```
