@@ -1278,3 +1278,79 @@ console.log(
 }
 */
 ```
+
+## 递归和堆栈
+# 递归和堆栈
+[zh.javascript.info](https://zh.javascript.info/recursion)
+> 当一个函数解决一个任务时，在解决的过程中它可以调用很多其它函数。在部分情况下，函数会调用 自身。这就是所谓的 递归。
+
+> 递归的另一个重要应用就是递归遍历。
+
+> 任何递归函数都可以被重写为迭代（译注：也就是循环）形式。有时这是在优化代码时需要做的。但对于大多数任务来说，递归方法足够快，并且容易编写和维护。
+
+```js
+let company = { // 是同一个对象，简洁起见被压缩了
+  sales: [{name: 'John', salary: 1000}, {name: 'Alice', salary: 1600 }],
+  development: {
+    sites: [{name: 'Peter', salary: 2000}, {name: 'Alex', salary: 1800 }],
+    internals: [{name: 'Jack', salary: 1300}]
+  }
+};
+
+// 用来完成任务的函数
+function sumSalaries(department) {
+  if (Array.isArray(department)) { // 情况（1）
+    return department.reduce((prev, current) => prev + current.salary, 0); // 求数组的和
+  } else { // 情况（2）
+    let sum = 0;
+    for (let subdep of Object.values(department)) {
+      sum += sumSalaries(subdep); // 递归调用所有子部门，对结果求和
+    }
+    return sum;
+  }
+}
+
+alert(sumSalaries(company)); // 7700
+```
+
+### 练习题
+1. 编写一个函数 sumTo(n) 计算 1 + 2 + ... + n 的和。
+```js
+function sumTo(n) {
+  if (n === 1) {
+    return 1;
+  } else {
+    return n + sumTo(n - 1);
+  }
+}
+```
+
+2. 编写一个函数 factorial(n) 使用递归调用计算 n!。
+```js
+function factorial(n) {
+  if (n === 1) {
+    return 1;
+  } else {
+    return n * factorial(n - 1);
+  }
+}
+
+console.log(factorial(5));
+```
+
+3. 斐波那契数 序列有这样的公式： Fn = Fn-1 + Fn-2。换句话说，下一个数字是前两个数字的和。
+前两个数字是 1，然后是 2(1+1)，然后 3(1+2)，5(2+3) 等：1, 1, 2, 3, 5, 8, 13, 21...。
+编写一个函数 fib(n) 返回第 n 个斐波那契数。
+```js
+function fib(n) {
+  if (n === 1) {
+    return 1;
+  } else if (n == 2) {
+    return 1;
+  } else {
+    return fib(n - 1) + fib(n - 2);
+  }
+}
+
+console.log(fib(9));
+```
