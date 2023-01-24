@@ -1405,3 +1405,246 @@ Spread 语法只适用于可迭代对象。
 
   
 > Spread 语法用于将数组传递给通常需要含有许多参数的函数。
+
+## 变量作用域，闭包  
+ [zh.javascript.info](https://zh.javascript.info/closure)  
+ > 函数可以访问其外部的变量。  
+
+   
+ > 但是，如果在函数被创建之后，外部变量发生了变化会怎样？函数会获得新值还是旧值？  
+
+   
+ > 如果将函数作为参数（argument）传递并在代码中的另一个位置调用它，该函数将访问的是新位置的外部变量吗？  
+
+   
+ > 用 const 声明的变量的行为也相同（译注：与 let 在作用域等特性上是相同的），因此，本文也涉及用 const 进行变量声明。   
+ 旧的 var 与上面两个有着明显的区别  
+
+   
+ > 如果在代码块 {...} 内声明了一个变量，那么这个变量只在该代码块内可见。  
+
+   
+ > 对于 if，for 和 while 等，在 {...} 中声明的变量也仅在内部可见：  
+
+   
+ > 词法环境对象由两部分组成：   
+   
+    - 环境记录（Environment Record） —— 一个存储所有局部变量作为其属性（包括一些其他信息，例如 this 的值）的对象。   
+    - 对外部词法环境 的引用，与外部代码相关联。  
+
+   
+ > 函数声明的初始化会被立即完成。  
+
+   
+ > 当创建了一个词法环境（Lexical Environment）时，函数声明会立即变为即用型函数（不像 let 那样直到声明处才可用）。  
+
+   
+ > 当代码要访问一个变量时 —— 首先会搜索内部词法环境，然后搜索外部环境，然后搜索更外部的环境，以此类推，直到全局词法环境。  
+
+   
+ > 所有的函数在“诞生”时都会记住创建它们的词法环境。从技术上讲，这里没有什么魔法：所有函数都有名为 [[Environment]] 的隐藏属性，该属性保存了对创建该函数的词法环境的引用。  
+
+   
+ > 闭包 是指一个函数可以记住其外部变量并可以访问这些变量。  
+
+``` js
+function makeCounter() {
+  let count = 0;
+
+  return function() {
+    return count++;
+  };
+}
+
+let counter = makeCounter();
+```
+> JavaScript 中的函数会自动通过隐藏的 [[Environment]] 属性记住创建它们的位置，所以它们都可以访问外部变量。  
+  
+> 但在实际中，JavaScript 引擎会试图优化它。它们会分析变量的使用情况，如果从代码中可以明显看出有未使用的外部变量，那么就会将其删除。  
+
+``` js
+let name = "John";
+
+function sayHi() {
+  alert("Hi, " + name);
+}
+
+name = "Pete";
+
+sayHi(); // 会显示什么："John" 还是 "Pete"？
+// Pete
+// 函数将从内到外依次在对应的词法环境中寻找目标变量，它使用最新的值。
+
+// 旧变量值不会保存在任何地方。当一个函数想要一个变量时，它会从自己的词法环境
+// 或外部词法环境中获取当前值。
+```
+``` js
+function makeCounter() {
+  let count = 0;
+
+  return function() {
+    return count++;
+  };
+}
+
+let counter = makeCounter();
+let counter2 = makeCounter();
+
+alert( counter() ); // 0
+alert( counter() ); // 1
+
+alert( counter2() ); // 0
+alert( counter2() ); // 1
+// 函数 counter 和 counter2 是通过 makeCounter 的不同调用创建的。
+
+// 因此，它们具有独立的外部词法环境，每一个都有自己的 count。
+```
+
+``` js
+let phrase = "Hello";
+
+if (true) {
+  let user = "John";
+
+  function sayHi() {
+    alert(`${phrase}, ${user}`);
+  }
+}
+
+sayHi(); // error
+// 函数 sayHi 是在 if 内声明的，所以它只存在于 if 中。外部是没有 sayHi 的。
+```
+
+``` js
+// 编写一个像 sum(a)(b) = a+b 这样工作的 sum 函数。
+function sum(a) {
+  return function (b) {
+    return a + b;
+  };
+}
+
+console.log(sum(5)(-4));
+```
+
+``` js
+// 变量死区
+// 下面的代码会报错 error，ReferenceError: Cannot access 'x' before initialization
+let x = 1;
+
+function func() {
+  console.log(x); // ?
+
+  let x = 2;
+}
+
+func();
+
+// 引擎从函数开始就知道局部变量 x，
+// 但是变量 x 一直处于“未初始化”（无法使用）的状态，直到结束 let（“死区”）
+// 因此答案是 error
+```
+
+``` js
+// 闭包与Arr.filter(f)
+/* 
+我们有一个内建的数组方法 arr.filter(f)。它通过函数 f 过滤元素。如果它返回 true，
+那么该元素会被返回到结果数组中。
+
+制造一系列“即用型”过滤器：
+
+inBetween(a, b) —— 在 a 和 b 之间或与它们相等（包括）。
+inArray([...]) —— 包含在给定的数组中。
+用法如下所示：
+
+arr.filter(inBetween(3,6)) —— 只挑选范围在 3 到 6 的值。
+arr.filter(inArray([1,2,3])) —— 只挑选与 [1,2,3] 中的元素匹配的元素。
+*/
+let arr = [1, 2, 3, 4, 5, 6, 7];
+
+function inBetween(a, b) {
+  return function (value) {
+    return value >= a && value <= b;
+  };
+}
+
+function inArray(array) {
+  return function (value) {
+    return array.includes(value);
+  };
+}
+
+console.log(arr.filter(inBetween(3, 6))); // 3,4,5,6
+
+console.log(arr.filter(inArray([1, 2, 10]))); // 1,2
+```
+
+``` js
+// 闭包与 sort，按字段排序
+let users = [
+  { name: "John", age: 20, surname: "Johnson" },
+  { name: "Pete", age: 18, surname: "Peterson" },
+  { name: "Ann", age: 19, surname: "Hathaway" },
+];
+
+function byField(key) {
+  return function (a, b) {
+    return a[key] > b[key] ? 1 : -1;
+  };
+}
+
+users.sort(byField("name"));
+console.log(users);
+users.sort(byField("age"));
+console.log(users);
+```
+
+``` js
+// 闭包与循环
+function makeArmy() {
+  let shooters = [];
+
+  let i = 0;
+  while (i < 10) {
+    let shooter = function () {
+      // 创建一个 shooter 函数，
+      console.log(i); // 应该显示其编号
+    };
+    shooters.push(shooter); // 将此 shooter 函数添加到数组中
+    i++;
+  }
+
+  // ……返回 shooters 数组
+  return shooters;
+}
+
+let army = makeArmy();
+// ……所有的 shooter 显示的都是 10，而不是它们的编号 0, 1, 2, 3...
+army[0](); // 编号为 0 的 shooter 显示的是 10
+army[1](); // 编号为 1 的 shooter 显示的是 10
+army[2](); // 10，其他的也是这样。
+/*
+这是因为 shooter 使用的 i 是在 shooter 函数以外，调用时，循环函数已运行结束。
+此时 i 等于 10；
+两种改法：
+1. 让 shooter 拥有和自己位于同一词法环境的 i
+2. 使用 for 循环代替 while
+*/
+// 1. 让 shooter 拥有和自己位于同一词法环境的 i
+while (i < 10) {
+  let j = i;
+  let shooter = function () {
+    // 创建一个 shooter 函数，
+    console.log(j); // 应该显示其编号
+  };
+  shooters.push(shooter); // 将此 shooter 函数添加到数组中
+  i++;
+}
+
+// 2. 使用 for 循环代替 while
+for (let i = 0; i < 10; i++) {
+  let shooter = function () {
+    console.log(i);
+  };
+  shooters.push(shooter);
+}
+```
