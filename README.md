@@ -1354,3 +1354,54 @@ function fib(n) {
 
 console.log(fib(9));
 ```
+
+## Rest 参数与 Spread 语法
+[zh.javascript.info](https://zh.javascript.info/rest-parameters-spread)  
+> ...变量名，这将会声明一个数组并指定其名称，其中存有剩余的参数。这三个点的语义就是“收集剩余的参数并存进指定数组中”。  
+
+  
+> ...rest 必须写在参数列表最后。  
+
+  
+> 有一个名为 arguments 的特殊类数组对象可以在函数中被访问，该对象以参数在参数列表中的索引作为键，存储所有参数。  
+
+  
+> 尽管 arguments 是一个类数组，也是可迭代对象，但它终究不是数组。它不支持数组方法，因此我们不能调用 arguments.map(...) 等方法。  
+
+  
+> 箭头函数没有 "arguments"   
+  
+如果我们在箭头函数中访问 arguments，访问到的 arguments 并不属于箭头函数，而是属于箭头函数外部的“普通”函数。  
+
+  
+> 箭头函数没有自身的 this。现在我们知道了它们也没有特殊的 arguments 对象。  
+
+  
+> Spread 语法 可以解决这个问题！它看起来和 rest 参数很像，也使用 ...，但是二者的用途完全相反。  
+
+  
+> Array.from(obj) 和 [...obj] 存在一个细微的差别：   
+  
+Array.from 适用于类数组对象也适用于可迭代对象。   
+Spread 语法只适用于可迭代对象。   
+  
+因此，对于将一些“东西”转换为数组的任务，Array.from 往往更通用。  
+> 复制 array/object  
+
+  ``` js
+      let arr = [1, 2, 3];
+      
+      let arrCopy = [...arr]; 
+      
+      let obj = { a: 1, b: 2, c: 3 };
+      
+      let objCopy = { ...obj }; 
+  ```
+> 若 ... 出现在函数参数列表的最后，那么它就是 rest 参数，它会把参数列表中剩余的参数收集到一个数组中。   
+若 ... 出现在函数调用或类似的表达式中，那它就是 spread 语法，它会把一个数组展开为列表。  
+
+  
+> Rest 参数用于创建可接受任意数量参数的函数。  
+
+  
+> Spread 语法用于将数组传递给通常需要含有许多参数的函数。
