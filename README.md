@@ -1207,7 +1207,6 @@ console.log(formatDate(new Date(2023, 0, 20)));
 ```
 
 ## JSON 方法，toJSON
-# JSON 方法，toJSON
 [zh.javascript.info](https://zh.javascript.info/json)
 > JSON.stringify 将对象转换为 JSON
 
@@ -1279,8 +1278,8 @@ console.log(
 */
 ```
 
+# 函数进阶内容
 ## 递归和堆栈
-# 递归和堆栈
 [zh.javascript.info](https://zh.javascript.info/recursion)
 > 当一个函数解决一个任务时，在解决的过程中它可以调用很多其它函数。在部分情况下，函数会调用 自身。这就是所谓的 递归。
 
@@ -1648,3 +1647,33 @@ for (let i = 0; i < 10; i++) {
   shooters.push(shooter);
 }
 ```
+
+## 老旧的 `var`
+[zh.javascript.info](https://zh.javascript.info/var)  
+> ar 声明的变量只有函数作用域和全局作用域，没有块级作用域
+
+> 对于循环也是这样的，var 声明的变量没有块级作用域也没有循环局部作用域：
+
+> 如果一个代码块位于函数内部，那么 var 声明的变量的作用域将为函数作用域
+
+> 使用 var，我们可以重复声明一个变量  
+
+> “var” 声明的变量，可以在其声明语句前被使用   
+
+> var 声明的变量会在函数开头被定义，与它在代码中定义的位置无关  
+
+> 声明会被提升，但是赋值不会。   
+
+> 声明在函数刚开始执行的时候（“提升”）就被处理了，但是赋值操作始终是在它出现的地方才起作用。  
+``` js
+function sayHi() {
+  var phrase; // 在函数刚开始时进行变量声明
+
+  alert(phrase); // undefined
+
+  phrase = "Hello"; // ……赋值 — 当程序执行到这一行时。
+}
+
+sayHi();
+```
+> 在之前，JavaScript 中只有 var 这一种声明变量的方式，并且这种方式声明的变量没有块级作用域，程序员们就发明了一种模仿块级作用域的方法。这种方法被称为“立即调用函数表达式”  
