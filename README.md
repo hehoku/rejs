@@ -1677,3 +1677,13 @@ function sayHi() {
 sayHi();
 ```
 > 在之前，JavaScript 中只有 var 这一种声明变量的方式，并且这种方式声明的变量没有块级作用域，程序员们就发明了一种模仿块级作用域的方法。这种方法被称为“立即调用函数表达式”  
+
+## 全局对象
+[zh.javascript.info](https://zh.javascript.info/global-object)
+> 在浏览器中，它的名字是 “window”，对 Node.js 而言，它的名字是 “global”，其它环境可能用的是别的名字。
+
+> 最近，globalThis 被作为全局对象的标准名称加入到了 JavaScript 中，所有环境都应该支持该名称。所有主流浏览器都支持它。
+
+> 在浏览器中，使用 var（而不是 let/const！）声明的全局函数和变量会成为全局对象的属性。
+
+> 函数声明（特指在主代码流中具有 function 关键字的语句，而不是函数表达式）也有这样的效果。
