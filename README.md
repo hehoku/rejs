@@ -1729,3 +1729,25 @@ func(); // Error, func is not defined（在函数外不可见）
 > 如果我们使用 new Function 创建一个函数，那么该函数的 [[Environment]] 并不指向当前的词法环境，而是指向全局环境。
 
 > 因此，此类函数无法访问外部（outer）变量，只能访问全局变量。
+
+## setTimeout & setInterval
+[zh.javascript.info](https://zh.javascript.info/settimeout-setinterval)
+> setTimeout 允许我们将函数推迟到一段时间间隔之后再执行。 
+>   setInterval 允许我们重复运行一个函数，从一段时间间隔之后开始运行，之后以该时间间隔连续重复运行该函数。
+
+> setTimeout 期望得到一个对函数的引用
+
+> setTimeout 在调用时会返回一个“定时器标识符（timer identifier）”，在我们的例子中是 timerId，我们可以使用它来取消执行。
+
+```js
+let timerId = setTimeout(...);
+clearTimeout(timerId);
+```
+
+> 嵌套的 setTimeout 相较于 setInterval 能够更精确地设置两次执行之间的延时。
+```js
+let timerId = setTimeout(function tick() {
+  console.log("tick");
+  timerId = setTimeout(tick, 2000); // (*)
+}, 2000);
+```
