@@ -1717,3 +1717,15 @@ func(); // Error, func is not defined（在函数外不可见）
 > 关于名字 func 有两个特殊的地方，这就是添加它的原因：   
   - 它允许函数在内部引用自己。
   - 它在函数外是不可见的。
+
+## new Function 语法
+[zh.javascript.info](https://zh.javascript.info/new-function)
+> let func = new Function ([arg1, arg2, ...argN], functionBody);
+
+> new Function 允许我们将任意字符串变为函数。例如，我们可以从服务器接收一个新的函数并执行它：
+
+> 使用 new Function 创建函数的应用场景非常特殊，比如在复杂的 Web 应用程序中，我们需要从服务器获取代码或者动态地从模板编译函数时才会使用。
+
+> 如果我们使用 new Function 创建一个函数，那么该函数的 [[Environment]] 并不指向当前的词法环境，而是指向全局环境。
+
+> 因此，此类函数无法访问外部（outer）变量，只能访问全局变量。
