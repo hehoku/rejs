@@ -1687,3 +1687,33 @@ sayHi();
 > 在浏览器中，使用 var（而不是 let/const！）声明的全局函数和变量会成为全局对象的属性。
 
 > 函数声明（特指在主代码流中具有 function 关键字的语句，而不是函数表达式）也有这样的效果。
+
+## 函数对象，NFE
+- [zh.javascript.info](https://zh.javascript.info/function-object)  
+> 在 JavaScript 中，函数的类型是对象。
+
+> 函数的名字可以通过属性 “name” 来访问
+
+> 内建属性 “length”，它返回函数入参的个数
+
+> rest 参数不参与计数  
+
+> 我们可以把函数当作对象，在它里面存储属性，但是这对它的执行没有任何影响。变量不是函数属性，反之亦然。它们之间是平行的。  
+
+> 命名函数表达式（NFE，Named Function Expression），指带有名字的函数表达式的术语。  
+``` js
+let sayHi = function func(who) {
+if (who) {
+  alert(`Hello, ${who}`);
+} else {
+  func("Guest"); // 使用 func 再次调用函数自身
+}
+};
+sayHi(); // Hello, Guest
+// 但这不工作：
+func(); // Error, func is not defined（在函数外不可见）
+// 应用场景：防止 sayHi 函数在外部被改变。
+```
+> 关于名字 func 有两个特殊的地方，这就是添加它的原因：   
+  - 它允许函数在内部引用自己。
+  - 它在函数外是不可见的。
