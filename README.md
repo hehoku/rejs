@@ -1751,3 +1751,37 @@ let timerId = setTimeout(function tick() {
   timerId = setTimeout(tick, 2000); // (*)
 }, 2000);
 ```
+
+### 练习题
+编写一个函数 printNumbers(from, to)，使其每秒输出一个数字，数字从 from 开始，到 to 结束。
+使用以下两种方法来实现。
+
+1. 使用 setInterval。
+2. 使用嵌套的 setTimeout。
+```js
+function printNumbers(from, to) {
+  // use setInterval
+  // let i = from;
+  // let timerId = setInterval(function () {
+  //   console.log(i);
+  //   i++;
+  //   if (i > to) {
+  //     clearInterval(timerId);
+  //   }
+  // }, 1000);
+
+  // use setTimeout
+  let i = from;
+  let timerId = setTimeout(function print() {
+    console.log(i);
+    i++;
+    timerId = setTimeout(print, 1000);
+
+    if (i > to) {
+      clearTimeout(timerId);
+    }
+  }, 1000);
+}
+
+printNumbers(1, 3);
+```
