@@ -1785,3 +1785,95 @@ function printNumbers(from, to) {
 
 printNumbers(1, 3);
 ```
+
+## 装饰器模式和转发，call/apply
+[zh.javascript.info](https://zh.javascript.info/call-apply-decorators)
+### 透明缓存
+```js
+function slow(x) {
+  console.log("from slow function");
+  return x;
+}
+
+function cachingDecorator(func) {
+  let cache = new Map();
+
+  return function (x) {
+    if (cache.has(x)) {
+      console.log("from cache");
+      return cache.get(x);
+    }
+
+    let result = func(x);
+
+    cache.set(x, result);
+    return result;
+  };
+}
+
+slow = cachingDecorator(slow);
+
+console.log(slow(1));
+console.log("- - - - -");
+console.log("again: " + slow(1));
+console.log("- - - - -");
+console.log(slow(2));
+console.log("- - - - -");
+console.log("again: " + slow(2));
+```
+
+> cachingDecorator 是可重用的。我们可以将它应用于另一个函数。 
+>   缓存逻辑是独立的，它没有增加 slow 本身的复杂性（如果有的话）。 
+>   如果需要，我们可以组合多个装饰器（其他装饰器将遵循同样的逻辑）。
+
+> 对于即可迭代又是类数组的对象，例如一个真正的数组，我们使用 call 或 apply 均可，但是 apply 可能会更快，因为大多数 JavaScript 引擎在内部对其进行了优化。
+
+> 将所有参数连同上下文一起传递给另一个函数被称为“呼叫转移（call forwarding）”。
+
+>  方法借用（method borrowing）。 
+>  我们从常规数组 [].join 中获取（借用）join 方法，并使用 [].join.call 在 arguments 的上下文中运行它。
+
+> 装饰器 是一个围绕改变函数行为的包装器。主要工作仍由该函数来完成。
+
+> 装饰器可以被看作是可以添加到函数的 “features” 或 “
+>         
+>           aspects
+
+> func.call(context, arg1, arg2…) —— 用给定的上下文和参数调用 func。 
+>   func.apply(context, args) —— 调用 func 将 context 作为 this 和类数组的 args 传递给参数列表。
+
+```js
+let worker = {
+  someMethod() {
+    return 1;
+  },
+
+  slow(min, max) {
+    return min + max;
+  },
+};
+
+function cachingDecorator(func, hash) {
+  let cache = new Map();
+  console.log(this);
+  return function () {
+    let key = hash();
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    console.log(this);
+    let result = func.call(this, ...arguments);
+    cache.set(key, result);
+    return result;
+  };
+}
+
+function hash() {
+  return [].join.call(arguments);
+}
+
+console.log(worker.slow(3, 5));
+
+worker.slow = cachingDecorator(worker.slow, hash);
+console.log(worker.slow(3, 5));
+```
