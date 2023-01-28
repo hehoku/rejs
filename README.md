@@ -1877,3 +1877,152 @@ console.log(worker.slow(3, 5));
 worker.slow = cachingDecorator(worker.slow, hash);
 console.log(worker.slow(3, 5));
 ```
+
+### 练习题
+1. 间谍装饰器
+创建一个装饰器 spy(func)，它应该返回一个包装器，该包装器将所有对函数的调用保存在其 calls 属性中。
+每个调用都保存为一个参数数组。
+```js
+function work(a, b) {
+  alert( a + b ); // work 是一个任意的函数或方法
+}
+
+function spy(func) {
+  function wrapper(...args) {
+    wrapper.calls.push(...args);
+    return func.apply(this, args);
+  }
+
+  wrapper.calls = [];
+  return wrapper;
+}
+
+work = spy(work);
+
+work(1, 2); // 3
+work(4, 5); // 9
+
+for (let args of work.calls) {
+  console.log( 'call:' + args.join() ); // "call:1,2", "call:4,5"
+}
+```
+
+2. 延时装饰器
+创建一个装饰器 delay(f, ms)，该装饰器将 f 的每次调用延时 ms 毫秒。
+
+```js
+function f(x) {
+  console.log(x);
+}
+
+function delay(func, mill) {
+  // 注，setTimeout 中要使用正确的变量
+  function wrapper(...args) {
+    let that = this;
+    setTimeout(function () {
+      console.log("this", this);
+      console.log("that", that);
+      func.apply(that, args);
+    }, mill);
+  }
+
+  return wrapper;
+}
+
+// 使用箭头函数
+function delay(f, ms) {
+  return function() {
+    setTimeout(() => f.apply(this, arguments), ms);
+  }
+}
+
+// create wrappers
+let f1000 = delay(f, 1000);
+let f5000 = delay(f, 5000);
+
+f1000("test"); // 在 1000ms 后显示 "test"
+f5000("test"); // 在 5000ms 后显示 "test"
+```
+
+3. 防抖装饰器
+debounce(f, ms) 装饰器的结果是一个包装器，该包装器将暂停对 f 的调用，直到经过 ms 毫秒的非活动状态
+（没有函数调用，“冷却期”），然后使用最新的参数调用 f 一次。
+```js
+function f(x) {
+  console.log(x);
+}
+
+function debounce(f, ms) {
+  let timeout;
+  return function () {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => f.apply(this, arguments), ms);
+  };
+}
+
+f = debounce(f, 5000);
+f(1);
+f(1);
+f(1);
+
+for (let i = 0; i < 100; i++) {
+  f(1);
+}
+f(2);
+// 上述代码只会输出 2
+```
+
+4. 节流装饰器
+创建一个“节流”装饰器 throttle(f, ms) —— 返回一个包装器。
+当被多次调用时，它会在每 ms 毫秒最多将调用传递给 f 一次。
+```js
+function f(a) {
+  console.log(a);
+}
+
+function throttle(func, ms) {
+  let isThrottled = false,
+    savedArgs,
+    savedThis;
+
+  function wrapper() {
+    if (isThrottled) {
+      // (2)
+      savedArgs = arguments;
+      savedThis = this;
+      return;
+    }
+    isThrottled = true;
+
+    func.apply(this, arguments); // (1)
+
+    setTimeout(function () {
+      isThrottled = false; // (3)
+      if (savedArgs) {
+        wrapper.apply(savedThis, savedArgs);
+        savedArgs = savedThis = null;
+      }
+    }, ms);
+  }
+
+  return wrapper;
+}
+
+// f1000 最多每 1000ms 将调用传递给 f 一次
+let f1000 = throttle(f, 1000);
+
+f1000(1); // 显示 1
+f1000(2); // (节流，尚未到 1000ms)
+f1000(3); // (节流，尚未到 1000ms)
+
+// 当 1000ms 时间到...
+// ...输出 3，中间值 2 被忽略
+```
+
+在第一次调用期间，wrapper 只运行 func 并设置冷却状态（isThrottled = true）。
+在这种状态下，所有调用都记忆在 savedArgs/savedThis 中。请注意，上下文和参数（arguments）同等重要，
+应该被记下来。我们同时需要他们以重现调用。
+……然后经过 ms 毫秒后，触发 setTimeout。冷却状态被移除（isThrottled = false），如果我们忽略了调用，
+则将使用最后记忆的参数和上下文执行 wrapper。
+第 3 步运行的不是 func，而是 wrapper，因为我们不仅需要执行 func，还需要再次进入冷却状态并设置 timeout 
+以重置它。
