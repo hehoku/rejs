@@ -2026,3 +2026,153 @@ f1000(3); // (节流，尚未到 1000ms)
 则将使用最后记忆的参数和上下文执行 wrapper。
 第 3 步运行的不是 func，而是 wrapper，因为我们不仅需要执行 func，还需要再次进入冷却状态并设置 timeout 
 以重置它。
+
+## 函数绑定
+[zh.javascript.info](https://zh.javascript.info/bind)
+> 一旦方法被传递到与对象分开的某个地方 —— this 就丢失。
+
+> 浏览器中的 setTimeout 方法有些特殊：它为函数调用设定了 this=window（对于 Node.js，this 则会变为计时器（timer）对象
+
+> func.bind(context) 的结果是一个特殊的类似于函数的“外来对象（exotic object）”，它可以像函数一样被调用，并且透明地将调用传递给 func 并设定 this=context。
+
+> 我们不仅可以绑定 this，还可以绑定参数（arguments）。
+```js
+function mul(a, b) {
+  return a * b;
+}
+
+let double = mul.bind(null, 2);
+
+alert( double(3) ); // = mul(2, 3) = 6
+alert( double(4) ); // = mul(2, 4) = 8
+alert( double(5) ); // = mul(2, 5) = 10
+```
+
+> bind 的完整语法如下： 
+>   
+>   let bound = func.bind(context, [arg1], [arg2], ...); 
+>   
+>  它允许将上下文绑定为 this，以及绑定函数的部分参数。
+
+> 函数的部分应用（partial function application） —— 我们通过绑定先有函数的一些参数来创建一个新函数。
+
+```js
+function partial(func, ...argsBound) {
+  return function(...args) { // (*)
+    return func.call(this, ...argsBound, ...args);
+  }
+}
+
+// 用法：
+let user = {
+  firstName: "John",
+  say(time, phrase) {
+    alert(`[${time}] ${this.firstName}: ${phrase}!`);
+  }
+};
+
+// 添加一个带有绑定时间的 partial 方法
+user.sayNow = partial(user.say, new Date().getHours() + ':' + new Date().getMinutes());
+
+user.sayNow("Hello");
+// 类似于这样的一些内容：
+// [10:00] John: Hello!
+```
+
+### 练习题
+1. 作为方法的绑定函数
+```js
+function f() {
+  alert( this ); // ?
+}
+
+let user = {
+  g: f.bind(null)
+};
+
+user.g();
+```
+注：
+1. f.bind(null)，这时函数 f() 的 this 为 null，而在非严格模式下，ES5 标准会将值为 null 的 this 绑定到
+全局对象，也就是 this=window（在浏览器环境下是 window，在其他环境下不同），所以就得到了
+ [object Window]。
+
+2. 那么在严格模式下，f.bind(null) 函数 f() 的 this=null。在本题中，绑定函数的绑定是 hard-bound，所以结
+果是 null。
+
+2. 二次 bind
+```js
+function f() {
+  alert(this.name);
+}
+
+f = f.bind( {name: "John"} ).bind( {name: "Ann" } );
+
+f();
+// 将会输出 John，一个函数不能被重绑定
+```
+
+3. bind 后的函数属性
+```js
+function sayHi() {
+  alert( this.name );
+}
+sayHi.test = 5;
+
+let bound = sayHi.bind({
+  name: "John"
+});
+
+alert( bound.test ); // 输出将会是什么？为什么？
+// undefined, bind 的结果是另一个对象，它没有 test 属性
+```
+
+4. 修复丢失了 this 的函数
+```js
+function askPassword(ok, fail) {
+  let password = prompt("Password?", '');
+  if (password == "rockstar") ok();
+  else fail();
+}
+
+let user = {
+  name: 'John',
+
+  loginOk() {
+    alert(`${this.name} logged in`);
+  },
+
+  loginFail() {
+    alert(`${this.name} failed to log in`);
+  },
+
+};
+
+askPassword(user.loginOk, user.loginFail);
+// 改为如下
+askPassword(user.loginOk.bind(user), user.loginFail.bind(user));
+```
+
+5. 偏函数在登录中的应用
+user 对象被修改了。现在不是两个函数 loginOk/loginFail，现在只有一个函数 user.login(true/false)。
+
+在下面的代码中，我们应该向 askPassword 传入什么参数，以使得 user.login(true) 结果是 ok，user.login(fasle) 结果是 fail？
+```js
+function askPassword(ok, fail) {
+  let password = prompt("Password?", '');
+  if (password == "rockstar") ok();
+  else fail();
+}
+
+let user = {
+  name: 'John',
+
+  login(result) {
+    alert( this.name + (result ? ' logged in' : ' failed to log in') );
+  }
+};
+
+// askPassword(?, ?); // ?
+askPassword(() => user.login(true), () => user.login(false))
+askPassword(user.login.bind(user, true), user.login.bind(user, false));
+```
