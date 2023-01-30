@@ -2176,3 +2176,20 @@ let user = {
 askPassword(() => user.login(true), () => user.login(false))
 askPassword(user.login.bind(user, true), user.login.bind(user, false));
 ```
+
+## 深入理解箭头函数
+# 深入理解箭头函数
+[zh.javascript.info](https://zh.javascript.info/arrow-functions)
+> 箭头函数没有 this。如果访问 this，则会从外部获取。
+
+> 不能对箭头函数进行 new 操作 
+>   不具有 this 自然也就意味着另一个限制：箭头函数不能用作构造器（constructor）。不能用 new 调用它们。
+
+> 箭头函数 => 和使用 .bind(this) 调用的常规函数之间有细微的差别： 
+>     
+>     .bind(this) 创建了一个该函数的“绑定版本”。 
+>     箭头函数 => 没有创建任何绑定。箭头函数只是没有 this。this 的查找与常规变量的搜索方式完全相同：在外部词法环境中查找。
+
+> 箭头函数也没有 arguments 变量。
+
+> 箭头函数是针对那些没有自己的“上下文”，但在当前上下文中起作用的短代码的。
