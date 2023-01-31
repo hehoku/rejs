@@ -2193,3 +2193,49 @@ askPassword(user.login.bind(user, true), user.login.bind(user, false));
 > 箭头函数也没有 arguments 变量。
 
 > 箭头函数是针对那些没有自己的“上下文”，但在当前上下文中起作用的短代码的。
+
+# 对象属性配置
+## 属性标志和属性描述符
+[zh.javascript.info](https://zh.javascript.info/property-descriptors)
+> writable — 如果为 true，则值可以被修改，否则它是只可读的。 
+>   enumerable — 如果为 true，则会被在循环中列出，否则不会被列出。 
+>   configurable — 如果为 true，则此属性可以被删除，这些特性也可以被修改，否则不可以。
+
+> Object.getOwnPropertyDescriptor 方法允许查询有关属性的 完整 信息。
+
+> let descriptor = Object.getOwnPropertyDescriptor(obj, propertyName);
+
+> 为了修改标志，我们可以使用 Object.defineProperty。
+
+> Object.defineProperty(obj, propertyName, descriptor)
+
+> 如果该属性存在，defineProperty 会更新其标志。否则，它会使用给定的值和标志创建属性；在这种情况下，如果没有提供标志，则会假定它是 false。
+
+## 属性的 getter 和 setter
+[zh.javascript.info](https://zh.javascript.info/property-accessors)
+> 当读取 obj.propName 时，getter 起作用，当 obj.propName 被赋值时，setter 起作用。
+
+> 从外表看，访问器属性看起来就像一个普通属性。
+
+> 一个属性要么是访问器（具有 get/set 方法），要么是数据属性（具有 value），但不能两者都是。
+
+> 访问器的一大用途是，它们允许随时通过使用 getter 和 setter 替换“正常的”数据属性，来控制和调整这些属性的行为。
+```js
+function User(name, birthday) {
+  this.name = name;
+  this.birthday = birthday;
+
+  // 年龄是根据当前日期和生日计算得出的
+  Object.defineProperty(this, "age", {
+    get() {
+      let todayYear = new Date().getFullYear();
+      return todayYear - this.birthday.getFullYear();
+    }
+  });
+}
+
+let john = new User("John", new Date(1992, 6, 1));
+
+alert( john.birthday ); // birthday 是可访问的
+alert( john.age );      // ……age 也是可访问的
+```
