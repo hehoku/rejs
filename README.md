@@ -2239,3 +2239,156 @@ let john = new User("John", new Date(1992, 6, 1));
 alert( john.birthday ); // birthday 是可访问的
 alert( john.age );      // ……age 也是可访问的
 ```
+
+# 原型,继承
+## 原型继承
+[zh.javascript.info](https://zh.javascript.info/prototype-inheritance)
+> 对象有一个特殊的隐藏属性 [[Prototype]]（如规范中所命名的），它要么为 null，要么就是对另一个对象的引用。该对象被称为“原型”：
+
+> 使用特殊的名字 __proto__
+
+> 引用不能形成闭环。如果我们试图给 __proto__ 赋值但会导致引用形成闭环时，JavaScript 会抛出错误。 
+>   __proto__ 的值可以是对象，也可以是 null。而其他的类型都会被忽略。
+
+> __proto__ 与内部的 [[Prototype]] 不一样。__proto__ 是 [[Prototype]] 的 getter/setter。
+
+> 现代编程语言建议我们应该使用函数 Object.getPrototypeOf/Object.setPrototypeOf 来取代 __proto__ 去 get/set 原型。
+
+> 在一个方法调用中，this 始终是点符号 . 前面的对象。
+
+> for..in 循环也会迭代继承的属性。
+
+> Object.keys 只返回自己的 key
+
+> for..in 会遍历自己以及继承的键
+
+> obj.hasOwnProperty(key)：如果 obj 具有自己的（非继承的）名为 key 的属性，则返回 true。
+
+> for..in 只会列出可枚举的属性
+
+### 练习题
+1. 
+```js
+let animal = {
+  jumps: null,
+};
+let rabbit = {
+  __proto__: animal,
+  jumps: true,
+};
+
+console.log(rabbit.jumps); // true from rabbit
+
+delete rabbit.jumps;
+
+console.log(rabbit.jumps); // null from animal
+
+delete animal.jumps;
+
+console.log(rabbit.jumps); // undefined, no exist
+```
+
+2. 搜索算法：给定以下对象
+```js
+let head = {
+  glasses: 1
+};
+
+let table = {
+  pen: 3
+};
+
+let bed = {
+  sheet: 1,
+  pillow: 2
+};
+
+let pockets = {
+  money: 2000
+};
+```
+- 使用 __proto__ 来分配原型，以使得任何属性的查找都遵循以下路径：pockets → bed → table → head。例如，pockets.pen 应该是 3（在 table 中找到），bed.glasses 应该是 1（在 head 中找到）。
+```js
+let head = {
+  glasses: 1,
+};
+
+let table = {
+  pen: 3,
+  __proto__: head,
+};
+
+let bed = {
+  sheet: 1,
+  pillow: 2,
+  __proto__: table,
+};
+
+let pockets = {
+  money: 2000,
+  __proto__: bed,
+};
+
+console.log(pockets.pen); // 3
+console.log(bed.glasses); // 1
+console.log(table.money); // undefined
+```
+- 回答问题：通过 pockets.glasses 或 head.glasses 获取 glasses，哪个更快？必要时需要进行基准测试。
+在现代引擎中，从性能的角度来看，我们是从对象还是从原型链获取属性都是没区别的。它们（引擎）会记住在哪里找到的该属性，并在下一次请求中重用它。
+
+3. 写在哪里？我们有从 animal 中继承的 rabbit。如果我们调用 rabbit.eat()，哪一个对象会接收到 full 属性：
+animal 还是 rabbit？
+```js
+let animal = {
+  eat() {
+    this.full = true;
+  }
+};
+
+let rabbit = {
+  __proto__: animal
+};
+
+rabbit.eat();
+```
+rabbit。
+这是因为 this 是点符号前面的这个对象，因此 rabbit.eat() 修改了 rabbit。s
+
+4. 我们有两只仓鼠：speedy 和 lazy 都继承自普通的 hamster 对象。
+当我们喂其中一只的时候，另一只也吃饱了。为什么？如何修复它？
+```js
+let hamster = {
+  stomach: [],
+
+  eat(food) {
+    this.stomach.push(food);
+  }
+};
+
+let speedy = {
+  __proto__: hamster
+};
+
+let lazy = {
+  __proto__: hamster
+};
+
+// 这只仓鼠找到了食物
+speedy.eat("apple");
+alert( speedy.stomach ); // apple
+
+// 这只仓鼠也找到了食物，为什么？请修复它。
+alert( lazy.stomach ); // apple
+```
+给每个仓鼠都设置一个自己的胃
+```js
+let speedy = {
+  __proto__: hamster,
+  stomach: [],
+};
+
+let lazy = {
+  __proto__: hamster,
+  stomach: [],
+};
+```
