@@ -2392,3 +2392,90 @@ let lazy = {
   stomach: [],
 };
 ```
+
+## F.prototype
+[zh.javascript.info](https://zh.javascript.info/function-prototype)
+> 如果 F.prototype 是一个对象，那么 new 操作符会使用它为新对象设置 [[Prototype]]。
+
+> 设置 Rabbit.prototype = animal 的字面意思是：“当创建了一个 new Rabbit 时，把它的 [[Prototype]] 赋值为 animal”。
+
+> 如果在创建之后，F.prototype 属性有了变化（F.prototype = <another object>），那么通过 new F 创建的新对象也将随之拥有新的对象作为 [[Prototype]]，但已经存在的对象将保持旧有的值。
+
+> 默认的 "prototype" 是一个只有属性 constructor 的对象，属性 constructor 指向函数自身。
+
+> F.prototype 的值要么是一个对象，要么就是 null：其他值都不起作用。
+
+> "prototype" 属性仅当设置在一个构造函数上，并通过 new 调用时，才具有这种特殊的影响。
+
+### 练习题
+1. 修改 prototype
+```js
+function Rabbit() {}
+Rabbit.prototype = {
+  eats: true
+};
+
+let rabbit = new Rabbit();
+
+alert( rabbit.eats ); // true
+```
+
+```js
+function Rabbit() {}
+Rabbit.prototype = {
+  eats: true
+};
+
+let rabbit = new Rabbit();
+
+Rabbit.prototype = {};
+
+alert( rabbit.eats ); // true
+// Rabbit.prototype 的赋值操作为新对象设置了 [[Prototype]]，但它不影响已有的对象。
+```
+
+```js
+function Rabbit() {}
+Rabbit.prototype = {
+  eats: true
+};
+
+let rabbit = new Rabbit();
+
+Rabbit.prototype.eats = false;
+
+alert( rabbit.eats ); // false
+// 对象通过引用被赋值。来自 Rabbit.prototype 的对象并没有被赋值，它仍然是被 Rabbit.prototype 
+// 和 rabbit 的 [[Prototype]] 引用的单个对象。
+
+// 所以当我们通过一个引用更改其内容时，它对其他引用也是可见的。
+```
+
+```js
+function Rabbit() {}
+Rabbit.prototype = {
+  eats: true
+};
+
+let rabbit = new Rabbit();
+
+delete rabbit.eats;
+
+alert( rabbit.eats ); // true
+// 所有 delete 操作都直接应用于对象。这里的 delete rabbit.eats 试图从 rabbit 中删除 eats 属性，
+// 但 rabbit 对象并没有 eats 属性。所以这个操作不会有任何影响。
+```
+
+```js
+function Rabbit() {}
+Rabbit.prototype = {
+  eats: true
+};
+
+let rabbit = new Rabbit();
+
+delete Rabbit.prototype.eats;
+
+alert( rabbit.eats ); // undefined
+// 属性 eats 被从 prototype 中删除，prototype 中就没有这个属性了
+```
