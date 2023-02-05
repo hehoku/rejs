@@ -2479,3 +2479,46 @@ delete Rabbit.prototype.eats;
 alert( rabbit.eats ); // undefined
 // 属性 eats 被从 prototype 中删除，prototype 中就没有这个属性了
 ```
+
+## 原生的原型
+[zh.javascript.info](https://zh.javascript.info/native-prototypes)
+> 当 new Object() 被调用（或一个字面量对象 {...} 被创建），按照前面章节中我们学习过的规则，这个对象的 [[Prototype]] 属性被设置为 Object.prototype： 
+
+> 在 Object.prototype 上方的链中没有更多的 [[Prototype]]：
+
+> null 和 undefined 比较特殊。它们没有对象包装器，所以它们没有方法和属性。并且它们也没有相应的原型。
+
+> 原生的原型是可以被修改的。
+
+> 在现代编程中，只有一种情况下允许修改原生原型。那就是 polyfilling。
+
+### 练习题
+1. 在所有函数的原型中添加 defer(ms) 方法，该方法将在 ms 毫秒后运行该函数。
+```js
+Function.prototype.defer = function(ms) {
+  setTimeout(this, ms);
+};
+
+function f() {
+  alert("Hello!");
+}
+
+f.defer(1000); // 1 秒后显示 "Hello!"
+```
+
+2. 在所有函数的原型中添加 defer(ms) 方法，该方法返回一个包装器，将函数调用延迟 ms 毫秒。
+```js
+Function.prototype.defer = function (ms) {
+  let f = this;
+  return function (...args) {
+    console.log(args);
+    setTimeout(() => f.apply(this, args), ms);
+  };
+};
+
+function f(a, b) {
+  console.log(a + b);
+}
+
+f.defer(1000)(1, 2); // 1 秒后显示 3
+```
