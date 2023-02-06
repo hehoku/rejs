@@ -2522,3 +2522,76 @@ function f(a, b) {
 
 f.defer(1000)(1, 2); // 1 秒后显示 3
 ```
+
+## 原型方法，没有 __proto__ 的对象
+[zh.javascript.info](https://zh.javascript.info/prototype-methods)
+> 现代的获取/设置原型的方法有： 
+
+>   Object.getPrototypeOf(obj) —— 返回对象 obj 的 [[Prototype]]。 
+>   Object.setPrototypeOf(obj, proto) —— 将对象 obj 的 [[Prototype]] 设置为 proto。
+
+> __proto__ 不被反对的唯一的用法是在创建新对象时，将其用作属性：{ __proto__: ... }。
+
+> Object.create(proto, [descriptors]) —— 利用给定的 proto 作为 [[Prototype]] 和可选的属性描述来创建一个空对象。
+
+> 我们可以使用 Object.create 来实现比复制 for..in 循环中的属性更强大的对象克隆方式： 
+
+>   let clone = Object.create(
+>   Object.getPrototypeOf(obj),
+>   Object.getOwnPropertyDescriptors(obj)
+> ); 
+
+>  此调用可以对 obj 进行真正准确地拷贝，包括所有的属性：可枚举和不可枚举的，数据属性和 setters/getters —— 包括所有内容，并带有正确的 [[Prototype]]。
+
+> __proto__ 属性很特殊：它必须是一个对象或者 null。字符串不能成为原型。这就是为什么将字符串赋值给 __proto__ 会被忽略。
+
+> __proto__ 不是对象的属性，而是 Object.prototype 的访问器属性： 
+
+>  因此，如果 obj.__proto__ 被读取或者赋值，那么对应的 getter/setter 会被从它的原型中调用，它会 set/get [[Prototype]]。
+
+> Object.create(null) 创建了一个空对象，这个对象没有原型（[[Prototype]] 是 null）
+
+### 练习题
+1.这儿有一个通过 Object.create(null) 创建的，用来存储任意 key/value 对的对象 dictionary。为该对象添加 dictionary.toString() 方法，该方法应该返回以逗号分隔的所有键的列表。你的 toString 方法不应该在使用 for...in 循环遍历数组的时候显现出来。
+```js
+let dictionary = Object.create(null, {
+  toString: {
+    value() {
+      return Object.keys(this).join();
+    }
+  }
+});
+
+// 你的添加 dictionary.toString 方法的代码
+
+// 添加一些数据
+dictionary.apple = "Apple";
+dictionary.__proto__ = "test"; // 这里 __proto__ 是一个常规的属性键
+
+// 在循环中只有 apple 和 __proto__
+for(let key in dictionary) {
+  alert(key); // "apple", then "__proto__"
+}
+
+// 你的 toString 方法在发挥作用
+console.log(dictionary.toString()); // "apple,__proto__"
+```
+
+2. 调用方式的差异
+```js
+function Rabbit(name) {
+  this.name = name;
+}
+Rabbit.prototype.sayHi = function() {
+  alert(this.name);
+};
+
+let rabbit = new Rabbit("Rabbit");
+
+rabbit.sayHi(); // Rabbit
+
+// 后三个都是 undefined，都等同于 Rabbit.prototype
+Rabbit.prototype.sayHi();
+Object.getPrototypeOf(rabbit).sayHi();
+rabbit.__proto__.sayHi();
+```
