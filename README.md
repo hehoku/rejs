@@ -2595,3 +2595,165 @@ Rabbit.prototype.sayHi();
 Object.getPrototypeOf(rabbit).sayHi();
 rabbit.__proto__.sayHi();
 ```
+
+# 类
+## Class 基本语法
+[zh.javascript.info](https://zh.javascript.info/class)
+
+> new 会自动调用 constructor() 方法，因此我们可以在 constructor() 中初始化对象。
+
+> 类的方法之间没有逗号
+
+> class User {...} 构造实际上做了如下的事儿： 
+>   
+>   创建一个名为 User 的函数，该函数成为类声明的结果。该函数的代码来自于 constructor 方法（如果我们不编写这种方法，那么它就被假定为空）。
+
+> 存储类中的方法，例如 User.prototype 中的 sayHi。
+
+> 通过 class 创建的函数具有特殊的内部属性标记 [[IsClassConstructor]]: true。因此，它与手动创建并不完全相同。
+
+> 与普通函数不同，必须使用 new 来调用它：
+
+> 类方法不可枚举。 类定义将 "prototype" 中的所有方法的 enumerable 标志设置为 false。
+
+> 类总是使用 use strict。 在类构造中的所有代码都将自动进入严格模式。
+
+> 如果类表达式有名字，那么该名字仅在类内部可见：
+
+> “类字段”是一种允许添加任何属性的语法。
+
+> 类字段重要的不同之处在于，它们会在每个独立对象中被设好，而不是设在 User.prototype
+
+> 如果一个对象方法被传递到某处，或者在另一个上下文中被调用，则 this 将不再是对其对象的引用。
+
+```js
+class Button {
+  constructor(value) {
+    this.value = value;
+  }
+
+  click() {
+    alert(this.value);
+  }
+}
+
+let button = new Button("hello");
+
+setTimeout(button.click, 1000); // undefined
+
+// 两种修复方法：
+// 1. 传递一个包装函数，例如 setTimeout(() => button.click(), 1000)。
+// 2. 将方法绑定到对象，例如在 constructor 中。
+
+// 在 class 中使用箭头函数
+class Button {
+  constructor(value) {
+    this.value = value;
+  }
+  click = () => {
+    alert(this.value);
+  }
+}
+
+let button = new Button("hello");
+
+setTimeout(button.click, 1000); // hello
+```
+
+> 类字段 click = () => {...} 是基于每一个对象被创建的，在这里对于每一个 Button 对象都有一个独立的方法，在内部都有一个指向此对象的 this。我们可以把 button.click 传递到任何地方，而且 this 的值总是正确的。
+
+```js
+class MyClass {
+  prop = value; // 属性
+
+  constructor(...) { // 构造器
+    // ...
+  }
+
+  method(...) {} // method
+
+  get something(...) {} // getter 方法
+  set something(...) {} // setter 方法
+
+  [Symbol.iterator]() {} // 有计算名称（computed name）的方法（此处为 symbol）
+  // ...
+}
+```
+
+### 练习题
+1. 重写以下代码
+```js
+function Clock({ template }) {
+  let timer;
+
+  function render() {
+    let date = new Date();
+
+    let hours = date.getHours();
+    if (hours < 10) hours = '0' + hours;
+
+    let mins = date.getMinutes();
+    if (mins < 10) mins = '0' + mins;
+
+    let secs = date.getSeconds();
+    if (secs < 10) secs = '0' + secs;
+
+    let output = template
+      .replace('h', hours)
+      .replace('m', mins)
+      .replace('s', secs);
+
+    console.log(output);
+  }
+
+  this.stop = function() {
+    clearInterval(timer);
+  };
+
+  this.start = function() {
+    render();
+    timer = setInterval(render, 1000);
+  };
+
+}
+
+let clock = new Clock({template: 'h:m:s'});
+clock.start();
+```
+
+```js
+class Clock {
+  constructor({ template }) {
+    this.template = template;
+  }
+
+  render() {
+    let date = new Date();
+
+    let hours = date.getHours();
+    if (hours < 10) hours = "0" + hours;
+
+    let mins = date.getMinutes();
+    if (mins < 10) mins = "0" + mins;
+
+    let secs = date.getSeconds();
+    if (secs < 10) secs = "0" + secs;
+
+    let output = this.template
+      .replace("h", hours)
+      .replace("m", mins)
+      .replace("s", secs);
+
+    console.log(output);
+  }
+
+  stop() {
+    clearInterval(this.timer);
+  }
+
+  start() {
+    this.render();
+    this.timer = setInterval(() => this.render(), 1000);
+  }
+}
+```
