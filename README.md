@@ -2757,3 +2757,110 @@ class Clock {
   }
 }
 ```
+
+## 类继承
+[zh.javascript.info](https://zh.javascript.info/class-inheritance)
+> 类继承是一个类扩展另一个类的一种方式。
+
+> 在内部，关键字 extends 使用了很好的旧的原型机制进行工作。它将 Rabbit.prototype.[[Prototype]] 设置为 Animal.prototype。所以，如果在 Rabbit.prototype 中找不到一个方法，JavaScript 就会从 Animal.prototype 中获取该方法。
+
+> 类语法不仅允许指定一个类，在 extends 后可以指定任意表达式。
+
+> 箭头函数没有 super。 
+>    如果被访问，它会从外部函数获取。
+
+> 如果一个类扩展了另一个类并且没有 constructor，那么将生成下面这样的“空” constructor：
+
+> 继承类的 constructor 必须调用 super(...)，并且 (!) 一定要在使用 this 之前调用。
+
+> 父类构造器总是会使用它自己字段的值，而不是被重写的那一个。
+
+> 当父类构造器在派生的类中被调用时，它会使用被重写的方法。 
+>  ……但对于类字段并非如此。
+
+> 原因在于字段初始化的顺序。类字段是这样初始化的： 
+>   
+>   对于基类（还未继承任何东西的那种），在构造函数调用前初始化。 
+>   对于派生类，在 super() 后立刻初始化。
+
+### 练习题
+1. 创建实例时出错
+```js
+class Animal {
+
+  constructor(name) {
+    this.name = name;
+  }
+
+}
+
+class Rabbit extends Animal {
+  constructor(name) {
+    // this.name = name; 继承 class 需要使用 super
+    super(name);
+    this.created = Date.now();
+  }
+}
+
+let rabbit = new Rabbit("White Rabbit"); // Error: this is not defined
+alert(rabbit.name);
+```
+
+2. 创建一个继承自 Clock 的新的类 ExtendedClock，并添加参数 precision — 每次 “ticks” 之间间隔的
+毫秒数，默认是 1000（1 秒）。
+```js
+class Clock {
+  constructor({ template }) {
+    this.template = template;
+  }
+
+  render() {
+    let date = new Date();
+
+    let hours = date.getHours();
+    if (hours < 10) hours = '0' + hours;
+
+    let mins = date.getMinutes();
+    if (mins < 10) mins = '0' + mins;
+
+    let secs = date.getSeconds();
+    if (secs < 10) secs = '0' + secs;
+
+    let output = this.template
+      .replace('h', hours)
+      .replace('m', mins)
+      .replace('s', secs);
+
+    console.log(output);
+  }
+
+  stop() {
+    clearInterval(this.timer);
+  }
+
+  start() {
+    this.render();
+    this.timer = setInterval(() => this.render(), 1000);
+  }
+}
+
+class ExtendedClock extends Clock {
+  constructor(options) {
+    super(options);
+    let { precision = 1000 } = options;
+    this.precision = precision;
+  }
+
+  start() {
+    super.render();
+    super.timer = setInterval(() => super.render(), this.precision);
+  }
+}
+
+let lowResolutionClock = new ExtendedClock({
+  template: "h:m:s",
+  precision: 2000,
+});
+
+lowResolutionClock.start();
+```
