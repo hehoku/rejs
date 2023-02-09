@@ -2864,3 +2864,47 @@ let lowResolutionClock = new ExtendedClock({
 
 lowResolutionClock.start();
 ```
+
+## 静态属性和静态方法
+[zh.javascript.info](https://zh.javascript.info/static-properties-methods)
+> 把一个方法作为一个整体赋值给类。这样的方法被称为 静态的（static）。
+
+> 静态方法用于实现属于整个类，但不属于该类任何特定对象的函数。
+
+> 静态方法不适用于单个对象 
+>    
+>    静态方法可以在类上调用，而不是在单个对象上。
+
+> 静态属性和方法是可被继承的。
+
+> 静态方法被用于实现属于整个类的功能。它与具体的类实例无关。
+
+### 练习题
+1. 类扩展自对象吗？如果我们像这样 `"class Rabbit extends Object"` 把它明确地写出来，那么结果会与简单的
+ `"class Rabbit"` 有所不同么？
+
+```js
+class Rabbit extends Object {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+let rabbit = new Rabbit("Rab");
+
+alert( rabbit.hasOwnProperty('name') ); // Error
+```
+
+报错的原因：使用 `extends` 时需要调用 `super`，除此之外，两者还存在差异：
+extends 会设置两个原型：
+1. 在构造函数的 `"prototype"` 之间设置原型（为了获取实例方法）。
+2. 在构造函数之间会设置原型（为了获取静态方法）
+
+```js
+// 在 class Rabbit extends Object 的例子中
+// Rabbit 可以通过 Rabbit 访问 Object 的静态方法
+class Rabbit extends Object {}
+
+alert( Rabbit.prototype.__proto__ === Object.prototype ); // (1) true
+alert( Rabbit.__proto__ === Object ); // (2) true
+```
