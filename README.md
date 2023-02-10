@@ -2929,3 +2929,38 @@ alert( Rabbit.__proto__ === Object ); // (2) true
 > `#` 是该字段为私有的特殊标志。我们无法从外部或从继承的类中访问它。
 
 > 私有字段不能通过 this[name] 访问
+
+## 扩展内建类
+[zh.javascript.info](https://zh.javascript.info/extend-natives)
+> 如果我们希望像 map 或 filter 这样的内建方法返回常规数组，我们可以在 Symbol.species 中返
+回 Array
+
+```js
+// 内建方法将使用这个作为 constructor
+static get [Symbol.species]() {
+  return Array;
+}
+```
+
+```js
+class PowerArray extends Array {
+  isEmpty() {
+    return this.length === 0;
+  }
+
+  // 内建方法将使用这个作为 constructor
+  static get [Symbol.species]() {
+    return Array;
+  }
+}
+
+let arr = new PowerArray(1, 2, 5, 10, 50);
+alert(arr.isEmpty()); // false
+
+// filter 使用 arr.constructor[Symbol.species] 作为 constructor 创建新数组
+let filteredArr = arr.filter(item => item >= 10);
+
+// filteredArr 不是 PowerArray，而是 Array
+alert(filteredArr.isEmpty()); // Error: filteredArr.isEmpty is not a function
+```
+> 内建类没有静态方法继承
