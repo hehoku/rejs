@@ -2908,3 +2908,24 @@ class Rabbit extends Object {}
 alert( Rabbit.prototype.__proto__ === Object.prototype ); // (1) true
 alert( Rabbit.__proto__ === Object ); // (2) true
 ```
+
+## 私有的和受保护的属性和方法
+[zh.javascript.info](https://zh.javascript.info/private-protected-properties-methods)
+> 面向对象编程最重要的原则之一 —— 将内部接口与外部接口分隔开来。
+
+> 内部接口 —— 可以通过该类的其他方法访问，但不能从外部访问的方法和属性。 
+>   外部接口 —— 也可以从类的外部访问的方法和属性。
+
+> 受保护的属性通常以下划线 _ 作为前缀。
+
+> 大多数时候首选 get.../set... 函数
+
+> 可以接受多个参数
+
+> 所以受保护的字段是自然可被继承的
+
+> 私有属性和方法应该以 `#` 开头。它们只在类的内部可被访问。
+
+> `#` 是该字段为私有的特殊标志。我们无法从外部或从继承的类中访问它。
+
+> 私有字段不能通过 this[name] 访问
