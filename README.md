@@ -3005,3 +3005,45 @@ let a = new A();
 alert( a instanceof B ); // true
 // instanceof 并不关心函数，而是关心函数的与原型链匹配的 prototype。
 ```
+
+## Mixin
+[zh.javascript.info](https://zh.javascript.info/mixins)
+> 在 JavaScript 中，我们只能继承单个对象。每个对象只能有一个 [[Prototype]]。并且每个类只可以扩展另外一个类。
+
+> mixin 是一个包含可被其他类使用而无需继承的方法的类。
+
+> mixin 提供了实现特定行为的方法，但是我们不单独使用它，而是使用它来将这些行为添加到其他类中。
+
+> 在 JavaScript 中构造一个 mixin 最简单的方式就是构造一个拥有实用方法的对象，以便我们可以轻松地将这些实用的方法合并到任何类的原型中。
+
+```js
+let sayMixin = {
+  say(phrase) {
+    alert(phrase);
+  }
+};
+
+let sayHiMixin = {
+  __proto__: sayMixin, // (或者，我们可以在这儿使用 Object.setPrototypeOf 来设置原型)
+
+  sayHi() {
+    // 调用父类方法
+    super.say(`Hello ${this.name}`); // (*)
+  },
+  sayBye() {
+    super.say(`Bye ${this.name}`); // (*)
+  }
+};
+
+class User {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+// 拷贝方法
+Object.assign(User.prototype, sayHiMixin);
+
+// 现在 User 可以打招呼了
+new User("Dude").sayHi(); // Hello Dude!
+```
