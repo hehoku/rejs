@@ -2156,7 +2156,7 @@ askPassword(user.loginOk.bind(user), user.loginFail.bind(user));
 5. 偏函数在登录中的应用
 user 对象被修改了。现在不是两个函数 loginOk/loginFail，现在只有一个函数 user.login(true/false)。
 
-在下面的代码中，我们应该向 askPassword 传入什么参数，以使得 user.login(true) 结果是 ok，user.login(fasle) 结果是 fail？
+在下面的代码中，我们应该向 askPassword 传入什么参数，以使得 user.login(true) 结果是 ok，user.login(false) 结果是 fail？
 ```js
 function askPassword(ok, fail) {
   let password = prompt("Password?", '');
@@ -2964,3 +2964,44 @@ let filteredArr = arr.filter(item => item >= 10);
 alert(filteredArr.isEmpty()); // Error: filteredArr.isEmpty is not a function
 ```
 > 内建类没有静态方法继承
+
+## 类检查："instanceof"
+[zh.javascript.info](https://zh.javascript.info/instanceof)
+> instanceof 操作符用于检查一个对象是否属于某个特定的 class。同时，它还考虑了继承。
+
+let s = Object.prototype.toString;
+
+alert( s.call(123) ); // [object Number]
+alert( s.call(null) ); // [object Null]
+alert( s.call(alert) ); // [object Function]
+> instanceof 在检查中会将原型链考虑在内,`instanceof` 并不关心函数，而是关心函数的与原型链匹配的 `prototype`。
+
+> objA.isPrototypeOf(objB)，如果 objA 处在 objB 的原型链中，则返回 true。
+
+> 使用 Object.prototype.toString 方法来揭示类型
+
+> 对于 number 类型，结果是 [object Number] 
+>   对于 boolean 类型，结果是 [object Boolean] 
+>   对于 null：[object Null] 
+>   对于 undefined：[object Undefined] 
+>   对于数组：[object Array]
+
+```js
+let s = Object.prototype.toString;
+
+alert( s.call(123) ); // [object Number]
+alert( s.call(null) ); // [object Null]
+alert( s.call(alert) ); // [object Function]
+```
+
+```js
+function A() {}
+function B() {}
+
+A.prototype = B.prototype = {};
+
+let a = new A();
+
+alert( a instanceof B ); // true
+// instanceof 并不关心函数，而是关心函数的与原型链匹配的 prototype。
+```
