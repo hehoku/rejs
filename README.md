@@ -3047,3 +3047,91 @@ Object.assign(User.prototype, sayHiMixin);
 // 现在 User 可以打招呼了
 new User("Dude").sayHi(); // Hello Dude!
 ```
+
+# 错误处理
+## 错误处理，"try...catch"
+[zh.javascript.info](https://zh.javascript.info/try-catch)
+> 要使得 try...catch 能工作，代码必须是可执行的。换句话说，它必须是有效的 JavaScript 代码。 
+>    如果代码包含语法错误，那么 try..catch 将无法正常工作
+
+> 因为 try...catch 包裹了计划要执行的函数，该函数本身要稍后才执行，这时引擎已经离开了 try...catch 结构。 
+>    为了捕获到计划的（scheduled）函数中的异常，那么 try...catch 必须在这个函数内：
+
+```js
+try {
+  setTimeout(function() {
+    noSuchVariable; // 脚本将在这里停止运行
+  }, 1000);
+} catch (err) {
+  alert( "不工作" );
+}
+
+setTimeout(function() {
+  try {
+    noSuchVariable; // try...catch 处理 error 了！
+  } catch {
+    alert( "error 被在这里捕获了！" );
+  }
+}, 1000);
+```
+
+## 自定义 error
+```js
+class ReadError extends Error {
+  constructor(message, cause) {
+    super(message);
+    this.cause = cause;
+    this.name = 'ReadError';
+  }
+}
+
+class ValidationError extends Error { /*...*/ }
+class PropertyRequiredError extends ValidationError { /* ... */ }
+
+function validateUser(user) {
+  if (!user.age) {
+    throw new PropertyRequiredError("age");
+  }
+
+  if (!user.name) {
+    throw new PropertyRequiredError("name");
+  }
+}
+
+function readUser(json) {
+  let user;
+
+  try {
+    user = JSON.parse(json);
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      throw new ReadError("Syntax Error", err);
+    } else {
+      throw err;
+    }
+  }
+
+  try {
+    validateUser(user);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      throw new ReadError("Validation Error", err);
+    } else {
+      throw err;
+    }
+  }
+
+}
+
+try {
+  readUser('{bad json}');
+} catch (e) {
+  if (e instanceof ReadError) {
+    alert(e);
+    // Original error: SyntaxError: Unexpected token b in JSON at position 1
+    alert("Original error: " + e.cause);
+  } else {
+    throw e;
+  }
+}
+```
