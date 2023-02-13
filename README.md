@@ -3135,3 +3135,42 @@ try {
   }
 }
 ```
+
+# Promise, async/await
+## Promise
+[zh.javascript.info](https://zh.javascript.info/promise-basics)
+> Promise 是将“生产者代码”和“消费者代码”连接在一起的一个特殊的 JavaScript 对象。
+
+> 传递给 new Promise 的函数被称为 executor。当 new Promise 被创建，executor 会自动运行。它包含最终应产出结果的生产者代码。
+
+> executor 会自动运行并尝试执行一项工作。尝试结束后，如果成功则调用 resolve，如果出现 error 则调用 reject。
+
+> 由 new Promise 构造器返回的 promise 对象具有以下内部属性： 
+>   
+>   state —— 最初是 "pending"，然后在 resolve 被调用时变为 "fulfilled"，或者在 reject 被调用时变为 "rejected"。 
+>   result —— 最初是 undefined，然后在 resolve(value) 被调用时变为 value，或者在 reject(error) 被调用时变为 error。
+
+> .then 的第一个参数是一个函数，该函数将在 promise resolved 且接收到结果后执行。 
+>  .then 的第二个参数也是一个函数，该函数将在 promise rejected 且接收到 error 信息后执行。
+
+```js
+new Promise((resolve, reject) => {
+  /* 做一些需要时间的事，之后调用可能会 resolve 也可能会 reject */
+})
+  // 在 promise 为 settled 时运行，无论成功与否
+  .finally(() => stop loading indicator)
+  // 所以，加载指示器（loading indicator）始终会在我们继续之前停止
+  .then(result => show result, err => show error)
+```
+### 练习题
+1. 内建函数 setTimeout 使用了回调函数。请创建一个基于 promise 的替代方案。函数 delay(ms) 应
+该返回一个 promise。这个 promise 应该在 ms 毫秒后被 resolve，所以我们可以向其中添加 .then
+```js
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+delay(3000).then(() => alert("runs after 3 seconds"));
+```
