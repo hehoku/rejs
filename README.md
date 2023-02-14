@@ -3174,3 +3174,43 @@ function delay(ms) {
 
 delay(3000).then(() => alert("runs after 3 seconds"));
 ```
+
+## Promise 链
+[zh.javascript.info](https://zh.javascript.info/promise-chaining)
+> 通过 .then 处理程序（handler）链进行传递 result。
+
+> 从技术上讲，我们也可以将多个 .then 添加到一个 promise 上。但这并不是 promise 链（chaining）。
+
+> 异步行为应该始终返回一个 promise。这样就可以使得之后我们计划后续的行为成为可能。即使我们现在不打算对链进行扩展，但我们之后可能会需要。
+
+## 使用 promise 进行错误处理
+[zh.javascript.info](https://zh.javascript.info/promise-error-handling)
+> 当一个 promise 被 reject 时，控制权将移交至最近的 rejection 处理程序。
+
+> 捕获所有 error 的最简单的方法是，将 .catch 附加到链的末尾
+
+### 练习题
+1. setTimeout 中的错误，以下代码的 `catch` 是否会被触发？
+```js
+new Promise(function(resolve, reject) {
+  setTimeout(() => {
+    throw new Error("Whoops!");
+  }, 1000);
+}).catch(alert);
+```
+函数代码周围有个“隐式的 try..catch”。所以，所有同步错误都会得到处理。
+但是这里的错误并不是在 executor 运行时生成的，而是在稍后生成的。因此，promise 无法处理它。
+
+## Promise API
+[zh.javascript.info](https://zh.javascript.info/promise-api)
+> Promise.all 接受一个可迭代对象（通常是一个数组项为 promise 的数组），并返回一个新的 promise。 
+>  当所有给定的 promise 都 resolve 时，新的 promise 才会 resolve，并且其结果数组将成为新 promise 的结果。
+
+> Promise.allSettled 等待所有的 promise 都被 settle，无论结果如何。结果数组具有： 
+>   
+>   {status:"fulfilled", value:result} 对于成功的响应， 
+>   {status:"rejected", reason:error} 对于 error。
+
+> 与 Promise.all 类似，但只等待第一个 settled 的 promise 并获取其结果（或 error）。
+
+> 与 Promise.race 类似，区别在于 Promise.any 只等待第一个 fulfilled 的 promise，并将这个 fulfilled 的 promise 返回。如果给出的 promise 都 rejected，那么返回的 promise 会带有 AggregateError —— 一个特殊的 error 对象，在其 errors 属性中存储着所有 promise error。
