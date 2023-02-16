@@ -3244,3 +3244,98 @@ new Promise(function(resolve, reject) {
 > 要声明一个 class 中的 async 方法，只需在对应方法前面加上 async 即可
 
 > async/await 可以和 Promise.all 一起使用
+
+### 练习题
+1. 使用 async/await 重写以下代码
+```js
+function loadJson(url) {
+  return fetch(url)
+    .then(response => {
+      if (response.status == 200) {
+        return response.json();
+      } else {
+        throw new Error(response.status);
+      }
+    });
+}
+
+loadJson('https://javascript.info/no-such-user.json')
+  .catch(alert); // Error: 404
+
+async function loadJson(url) {
+  let response = await fetch(url);
+
+  if (response.status == 200) {
+    let json = await response.json();
+    return json;
+  }
+
+  throw new Error(response.status);
+}
+
+loadJson('https://javascript.info/no-such-user.json').catch(console.error)
+```
+
+2. 使用 async/await 重写以下代码
+```js
+class HttpError extends Error {
+  constructor(response) {
+    super(`${response.status} for ${response.url}`);
+    this.name = "HttpError";
+    this.response = response;
+  }
+}
+
+async function loadJson(url) {
+  let response = await fetch(url);
+  if (response.status == 200) {
+    return response.json();
+  } else {
+    throw new HttpError(response);
+  }
+}
+
+// 询问用户名，直到 github 返回一个合法的用户
+async function demoGithubUser() {
+  let user;
+  while (true) {
+    let name = prompt("Enter a name?", "iliakan");
+
+    try {
+      user = await loadJson(`https://api.github.com/users/${name}`);
+      break; // 没有 error，退出循环
+    } catch (err) {
+      if (err instanceof HttpError && err.response.status == 404) {
+        // 循环将在 alert 后继续
+        alert("No such user, please reenter.");
+      } else {
+        // 未知的 error，再次抛出（rethrow）
+        throw err;
+      }
+    }
+  }
+
+  alert(`Full name: ${user.name}.`);
+  return user;
+}
+
+demoGithubUser();
+```
+
+3. 在非 async 函数中调用 async 函数
+```js
+async function wait() {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  return 10;
+}
+
+function f() {
+  // ……这里你应该怎么写？
+  // 我们需要调用 async wait() 并等待以拿到结果 10
+  // 记住，我们不能使用 "await"
+  wait().then(result => console.log(result));
+}
+
+f();
+```
