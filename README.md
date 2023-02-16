@@ -3214,3 +3214,33 @@ new Promise(function(resolve, reject) {
 > 与 Promise.all 类似，但只等待第一个 settled 的 promise 并获取其结果（或 error）。
 
 > 与 Promise.race 类似，区别在于 Promise.any 只等待第一个 fulfilled 的 promise，并将这个 fulfilled 的 promise 返回。如果给出的 promise 都 rejected，那么返回的 promise 会带有 AggregateError —— 一个特殊的 error 对象，在其 errors 属性中存储着所有 promise error。
+
+## 微任务（Microtask）
+[zh.javascript.info](https://zh.javascript.info/microtask-queue)
+> promise 的处理程序 .then、.catch 和 .finally 都是异步的。 
+>  即便一个 promise 立即被 resolve，.then、.catch 和 .finally 下面 的代码也会在这些处理程序之前被执行。
+
+> 异步任务需要适当的管理。为此，ECMA 标准规定了一个内部队列 PromiseJobs，通常被称为“微任务队列（microtask queue）
+
+> 队列（queue）是先进先出的：首先进入队列的任务会首先运行。 
+>   只有在 JavaScript 引擎中没有其它任务在运行时，才开始执行任务队列中的任务。
+
+> 当一个 promise 准备就绪时，它的 .then/catch/finally 处理程序就会被放入队列中：但是它们不会立即被执行。当 JavaScript 引擎执行完当前的代码，它会从队列中获取任务并执行它。
+
+> 如果一个 promise 的 error 未被在微任务队列的末尾进行处理，则会出现“未处理的 rejection”。
+
+## async/await
+[zh.javascript.info](https://zh.javascript.info/async-await)
+> 在函数前面的 “async” 这个单词表达了一个简单的事情：即这个函数总是返回一个 promise。其他值将自动被包装在一个 resolved 的 promise 中。
+
+> 关键字 await 让 JavaScript 引擎等待直到 promise 完成（settle）并返回结果。
+
+> await 实际上会暂停函数的执行，直到 promise 状态变为 settled，然后以 promise 的结果继续执行。这个行为不会耗费任何 CPU 资源，因为 JavaScript 引擎可以同时处理其他任务：执行其他脚本，处理事件等。
+
+> 不能在普通函数中使用 await
+
+> await 只在 async 函数中有效。
+
+> 要声明一个 class 中的 async 方法，只需在对应方法前面加上 async 即可
+
+> async/await 可以和 Promise.all 一起使用
