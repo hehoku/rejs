@@ -3339,3 +3339,78 @@ function f() {
 
 f();
 ```
+
+# Generator，高级 iteration
+## generator
+[zh.javascript.info](https://zh.javascript.info/generators)
+> generator 可以按需一个接一个地返回（“yield”）多个值。它们可与 iterable 完美配合使用，从而可以轻松地创建数据流。
+
+> 要创建一个 generator，我们需要一个特殊的语法结构：function*，即所谓的 “generator function”。
+
+> generator 函数与常规函数的行为不同。在此类函数被调用时，它不会运行其代码。而是返回一个被称为 “generator object” 的特殊对象，来管理执行流程。
+
+> 一个 generator 的主要方法就是 next()
+
+> next() 的结果始终是一个具有两个属性的对象： 
+>   
+>   value: 产出的（yielded）的值。 
+>   done: 如果 generator 函数已执行完成则为 true，否则为 false。
+
+> function* f(…) 或 function *f(…)？ 
+>    
+>    这两种语法都是对的。 
+>    但是通常更倾向于第一种语法，因为星号 * 表示它是一个 generator 函数，它描述的是函数种类而不是名称，因此 * 应该和 function 关键字紧贴一起。
+
+> generator 是 可迭代（iterable）的。 
+>  我们可以使用 for..of 循环遍历它所有的值：
+
+> 当 done: true 时，for..of 循环会忽略最后一个 value。因此，如果我们想要通过 for..of 循环显示所有的结果，我们必须使用 yield 返回它们：
+
+> generator 是可迭代的，我们可以使用 iterator 的所有相关功能，例如：spread 语法 ...
+
+> 对于 generator 而言，我们可以使用 yield* 这个特殊的语法来将一个 generator “嵌入”（组合）到另一个 generator 中：
+
+> yield* 指令将执行 委托 给另一个 generator。这个术语意味着 yield* gen 在 generator gen 上进行迭代，并将其产出（yield）的值透明地（transparently）转发到外部。就好像这些值就是由外部的 generator yield 的一样。
+
+> yield 是一条双向路（two-way street）：它不仅可以向外返回结果，而且还可以将外部的值传递到 generator 内。
+
+```js
+function* gen() {
+  // 向外部代码传递一个问题并等待答案
+  let result = yield "2 + 2 = ?"; // (*)
+
+  alert(result);
+}
+
+let generator = gen();
+
+let question = generator.next().value; // <-- yield 返回的 value
+
+generator.next(4); // --> 将结果传递到 generator 中
+```
+
+> generator 和调用 generator 的代码可以通过在 next/yield 中传递值来交换结果。
+
+> 每个 next(value)（除了第一个）传递一个值到 generator 中，该值变成了当前 yield 的结果，然后获取下一个 yield 的结果。
+
+> generator.return(value) 完成 generator 的执行并返回给定的 value。
+
+### 练习题
+1. “种子伪随机（seeded pseudo-random）generator”。它们将“种子（seed）”作为第一个值，然后使用公式生成下一个值。以便相同的种子（seed）可以产出（yield）相同的序列，因此整个数据流很容易复现。我们只需要记住种子并重复它即可。
+
+```js
+function* pseudoRandom(seed) {
+  let value = seed;
+
+  while (true) {
+    value = (value * 16807) % 2147483647;
+    yield value;
+  }
+}
+
+let generator = pseudoRandom(1);
+
+log(generator.next().value);
+log(generator.next().value);
+log(generator.next().value);
+```
