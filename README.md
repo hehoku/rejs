@@ -3414,3 +3414,60 @@ log(generator.next().value);
 log(generator.next().value);
 log(generator.next().value);
 ```
+
+## 异步迭代和 generator
+[zh.javascript.info](https://zh.javascript.info/async-iterators-generators)
+> 异步迭代允许我们对按需通过异步请求而得到的数据进行迭代。
+
+> 为了使一个对象可以异步迭代，它必须具有方法 Symbol.asyncIterator 
+
+> 这个方法必须返回一个带有 next() 方法的对象，next() 方法会返回一个 promise
+
+> 这个 next() 方法可以不是 async 的，它可以是一个返回值是一个 promise 的常规的方法，但是使用 async 关键字可以允许我们在方法内部使用 await，所以会更加方便。
+
+> 我们使用 for await(let value of range) (4) 来进行迭代，也就是在 for 后面添加 await。它会调用一次 range[Symbol.asyncIterator]() 方法一次，然后调用它的 next() 方法获取值。
+
+> Spread 语法 ... 无法异步工作
+
+> generator，它使我们能够写出更短的迭代代码。在大多数时候，当我们想要创建一个可迭代对象时，我们会使用 generator。
+
+> 当我们想创建一个异步生成一系列值的对象时，我们都可以使用异步 generator。
+
+> 在 function* 前面加上 async。这即可使 generator 变为异步的。 
+>  然后使用 for await (...) 来遍历它
+
+> 对于异步 generator，generator.next() 方法是异步的，它返回 promise。
+
+> 在一个常规的 generator 中，我们使用 result = generator.next() 来获得值。但在一个异步 generator 中，我们应该添加 await 关键字
+
+> 常规的 generator 可用作 Symbol.iterator 以使迭代代码更短。
+
+> 异步 generator 可用作 Symbol.asyncIterator 来实现异步迭代。
+
+![image.png](../assets/image_1676730478134_0.png)
+
+```js
+let range = {
+  from: 1,
+  to: 5,
+
+  // 这一行等价于 [Symbol.asyncIterator]: async function*() {
+  async *[Symbol.asyncIterator]() {
+    for(let value = this.from; value <= this.to; value++) {
+
+      // 在 value 之间暂停一会儿，等待一些东西
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      yield value;
+    }
+  }
+};
+
+(async () => {
+
+  for await (let value of range) {
+    alert(value); // 1，然后 2，然后 3，然后 4，然后 5
+  }
+
+})();
+```
